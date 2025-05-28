@@ -1,0 +1,477 @@
+# Expat Food Finder - Product Requirements Document
+
+## 1. Executive Summary
+
+Expat Food Finder is a mobile application designed to help expatriates discover, rate, and share food products in foreign supermarkets. The platform allows users to find products that match their taste expectations from their home country, share experiences through ratings and reviews, and build community with other expats facing similar challenges.
+
+The application addresses a critical pain point for people living abroad: the uncertainty when purchasing food products in a new country where taste preferences may differ significantly from those in their home country. By leveraging community knowledge and personal preferences based on country of origin, Expat Food Finder helps users avoid unpleasant surprises and discover products they'll enjoy.
+
+## 2. Problem Statement
+
+When expatriates arrive in a new country, they face significant challenges in grocery shopping:
+
+1. **Unfamiliar products**: Even familiar-looking products may taste completely different from what they expect
+2. **Cultural taste differences**: Local popular products may be unpalatable to people from different culinary backgrounds
+3. **Difficulty finding comfort foods**: Products that taste similar to home can be hard to locate
+4. **Language barriers**: Packaging may be in an unfamiliar language, making it difficult to understand ingredients or preparation
+
+Expat Food Finder solves these problems by creating a community-driven database of product ratings contextualized by users' countries of origin, helping expats quickly adapt to shopping in their new environment.
+
+## 3. Target Audience
+
+The primary target audience is:
+
+- **Expatriates**: People who have moved to a foreign country for work, education, or lifestyle reasons
+- **All experience levels**: From recent arrivals to long-term residents who want to share their knowledge
+- **International community**: Users from diverse countries of origin with different taste preferences
+- **Regular grocery shoppers**: People who regularly need to purchase food items in their new country
+
+Secondary audiences include:
+- **Tourists**: Visitors seeking authentic local products or familiar items while traveling
+- **International students**: Young adults living abroad temporarily who need to cook for themselves
+- **Digital nomads**: Remote workers who move between countries frequently
+
+## 4. Market Analysis
+
+### Competitive Landscape
+
+Based on market research, there are several adjacent applications in the food discovery and community space, but none that specifically address the expatriate grocery shopping experience:
+
+1. **Yuka & Open Food Facts**: 
+   - Focus on nutritional information and health scoring of products
+   - Don't account for taste preferences based on cultural background
+   - Strengths: Large product databases, barcode scanning technology
+   - Weaknesses: No community features specifically for expats
+
+2. **Eatwith**:
+   - Connects travelers with local hosts for home-cooked meals
+   - Social dining experience rather than product discovery
+   - Strengths: Cultural exchange aspect, community-building
+   - Weaknesses: Focus on dining experiences, not grocery shopping
+
+3. **Too Good To Go**:
+   - Helps users find discounted food from local businesses
+   - Focus on reducing food waste
+   - Strengths: Local business connections, sustainability focus
+   - Weaknesses: Not designed for product discovery or ratings
+
+4. **Local food delivery apps** (Glovo, Wolt, etc.):
+   - Focus on restaurant or grocery delivery
+   - Strengths: Convenience, wide product selection
+   - Weaknesses: No specialized product ratings or expat-focused features
+
+### Market Opportunity
+
+There is a clear gap in the market for an application that:
+- Focuses specifically on expatriates' grocery shopping needs
+- Provides culturally contextual food product ratings
+- Creates a community around shared experiences with foreign food products
+- Helps users locate specific products in local supermarkets
+
+## 5. Core Features and Functionality
+
+### MVP (Minimum Viable Product) Features
+
+#### User Registration and Profiles
+- User registration with Google, Facebook, or Microsoft authentication
+- Profile creation with required country of origin selection
+- Optional additional profile information (languages spoken, how long in current country, dietary preferences)
+- User profile management and settings
+
+#### Product Discovery and Search
+- Search products by name or category
+- Browse products by supermarket
+- Display product details including ratings, photos, and reviews
+- Filter products by rating, supermarket, or country of origin of reviewers
+
+#### Product Addition and Rating
+- Add new products with photos, description, and supermarket location
+- 3-tier rating system (inedible, ordinary, delicious)
+- Add detailed comments explaining taste differences or similarities to products from home country
+- Prevent duplicate product entries
+
+#### Location Features
+- Manual selection of current country and nearby supermarkets
+- Optional GPS-based supermarket detection (with user permission)
+- View products available at the currently selected supermarket
+
+#### Social Features
+- Follow other users (particularly from same country of origin)
+- Create personal lists of favorite products
+- View activity feed of followers' ratings and reviews
+
+### Future Features (Post-MVP)
+
+#### Advanced Search and Discovery
+- Image recognition for product identification
+- Barcode scanning for quick product lookup
+- Taste similarity matching ("This tastes like X from your home country")
+- Dietary restriction filters (vegetarian, vegan, halal, kosher, etc.)
+
+#### Enhanced Social Features
+- User-created lists (e.g., "Must-try products in Germany")
+- Share product discoveries directly to other platforms
+- In-app messaging between users
+- Community discussions and forums
+
+#### Supermarket Mapping
+- Indoor mapping of product locations within stores
+- Walking directions to find specific products
+- Suggested shopping list based on store inventory and preferences
+
+#### Premium Features
+- Offline product database access
+- Advanced analytics on shopping habits
+- Priority product identification for unrecognized items
+
+## 6. User Flows
+
+### User Registration and Onboarding
+1. User downloads and opens the app
+2. User selects authentication method (Google, Facebook, or Microsoft)
+3. User completes profile with country of origin (required)
+4. User grants or denies location permissions
+5. User selects current country of residence
+6. App displays brief tutorial on core features
+7. User is directed to the home screen
+
+### Adding a New Product
+1. User clicks "Add Product" button in the app
+2. User takes or uploads product photo
+3. User enters product name and description
+4. User selects supermarket where product was purchased
+5. User rates product (inedible, ordinary, delicious)
+6. User adds comments about the product
+7. System checks for duplicate products
+8. Product is added to the database and appears in user's activity
+
+### Finding Products at a Supermarket
+1. User enters or selects a supermarket from the list
+   (or app automatically detects supermarket via GPS)
+2. App displays list of products available at that supermarket
+3. User can filter products by rating or country of origin of reviewers
+4. User selects a product to view details
+5. User can save product to personal list or add their own rating
+
+## 7. Technical Architecture
+
+### Technology Stack
+
+#### Frontend
+- **Framework**: React Native with Expo
+  - Enables cross-platform development for both iOS and Android
+  - Provides excellent developer experience and faster development cycles
+  - Large community support and extensive libraries
+- **UI Components**: React Native Paper or Native Base
+  - Consistent design system across platforms
+  - Support for theming and responsive design
+- **State Management**: Redux or Context API with hooks
+  - Centralized state management for user data and preferences
+  - Efficient data flow and component updates
+
+#### Backend
+- **Authentication**: Firebase Authentication
+  - Supports multiple authentication providers
+  - Secure token-based authentication
+  - Simplifies social login implementation
+- **Database**: Firebase Firestore
+  - Real-time data synchronization
+  - Scales automatically with user growth
+  - Flexible document-based schema for product and user data
+- **Storage**: Firebase Cloud Storage
+  - Efficient storage for product images
+  - Automatic image optimization
+  - CDN for fast global access
+- **Cloud Functions**: Firebase Cloud Functions
+  - Server-side logic for complex operations
+  - Automated background tasks
+  - Integration with external services
+- **Analytics**: Firebase Analytics
+  - User behavior tracking
+  - Feature usage metrics
+  - Conversion and retention analysis
+
+#### API Integrations
+- **Maps/Location**: Google Maps API
+  - Store location services
+  - GPS positioning
+  - Geofencing for store entry detection
+- **Image Recognition**: Google Cloud Vision API (future feature)
+  - Product image analysis
+  - Barcode scanning
+  - Text extraction from product packaging
+
+### Data Model
+
+#### User
+- `id`: string (unique)
+- `email`: string
+- `name`: string
+- `profile_picture`: string (URL)
+- `origin_country`: string (required)
+- `current_country`: string
+- `joined_date`: timestamp
+- `followed_users`: array of user IDs
+- `preferences`: object (dietary preferences, etc.)
+
+#### Product
+- `id`: string (unique)
+- `name`: string
+- `description`: string
+- `photos`: array of URLs
+- `category`: string
+- `added_by`: user ID
+- `added_date`: timestamp
+- `supermarkets`: array of supermarket IDs
+- `average_rating`: number (calculated)
+- `rating_count`: number
+- `country_specific_ratings`: object (average ratings by country of origin)
+
+#### Rating
+- `id`: string (unique)
+- `product_id`: string
+- `user_id`: string
+- `rating`: number (1-3)
+- `comments`: string
+- `date`: timestamp
+- `helpful_count`: number
+
+#### Supermarket
+- `id`: string (unique)
+- `name`: string
+- `chain`: string
+- `address`: string
+- `location`: GeoPoint
+- `country`: string
+- `products`: array of product IDs
+
+#### UserList
+- `id`: string (unique)
+- `user_id`: string
+- `name`: string
+- `description`: string
+- `products`: array of product IDs
+- `is_public`: boolean
+- `created_date`: timestamp
+- `modified_date`: timestamp
+
+## 8. UI/UX Design Guidelines
+
+### Design Principles
+- **Simplicity**: Clean, uncluttered interface focusing on product images and key information
+- **Consistency**: Uniform design language across all screens
+- **Accessibility**: Support for various screen sizes, localization, and accessibility features
+- **Context-Aware**: UI adapts based on user's origin country and current location
+
+### Key Screens
+
+#### Home Screen
+- Personalized feed of products based on user's origin country
+- Recently added products in user's current location
+- Quick access to followed users' activity
+- One-tap access to search and add product functions
+
+#### Product Detail Screen
+- Large product images with gallery view
+- Rating breakdown by country of origin
+- Review comments with helpful voting
+- Supermarket availability information
+- Add to list button
+- Share button
+
+#### Supermarket Screen
+- List of products available at selected supermarket
+- Filter controls for ratings and categories
+- Map view of supermarket location
+- Star/save supermarket option
+
+#### User Profile Screen
+- User information and stats
+- Lists created by user
+- Products added and rated
+- Following/follower information
+- Activity timeline
+
+#### Add Product Screen
+- Photo capture with guidance
+- Product information entry form
+- Supermarket selection
+- Rating and comment fields
+
+### Color Palette
+- Primary: #4A89DC (Trustworthy blue)
+- Secondary: #F5A623 (Warm orange for calls to action)
+- Background: #F9F9F9 (Light gray for clean look)
+- Text: #333333 (Dark gray for readability)
+- Success: #5AD427 (Green for positive ratings)
+- Warning: #F5A623 (Orange for neutral ratings)
+- Error: #D0021B (Red for negative ratings)
+
+### Typography
+- Primary font: System default (San Francisco on iOS, Roboto on Android)
+- Headings: Bold weight, larger size
+- Body text: Regular weight, high contrast for readability
+- Accent text: Medium weight, primary color
+
+## 9. Development Roadmap
+
+### Phase 1: MVP Development (3-4 months)
+- **Month 1**: Design and architecture
+  - Complete UI/UX design
+  - Set up project architecture
+  - Configure Firebase services
+  - Implement authentication system
+- **Month 2**: Core functionality
+  - Develop product management features
+  - Implement rating system
+  - Create search functionality
+  - Build supermarket selection feature
+- **Month 3**: Social features and testing
+  - Implement follow system
+  - Create user lists functionality
+  - Conduct internal testing
+  - Bug fixes and optimizations
+- **Month 4** (if needed):
+  - Beta testing with select users
+  - Performance optimization
+  - Final adjustments before launch
+
+### Phase 2: Post-MVP Enhancements (2-3 months)
+- Advanced search capabilities
+- Image recognition
+- Enhanced social features
+- Analytics implementation
+
+### Phase 3: Scaling and Monetization (2-3 months)
+- User acquisition campaigns
+- Implementation of premium features
+- Partnership integrations with supermarkets
+- Internationalization and localization
+
+## 10. Monetization Strategy
+
+The initial MVP will be free to use to build the user base and product database. Future monetization options include:
+
+### Advertising
+- Targeted ads from food brands and supermarkets
+- Sponsored product recommendations
+- Featured supermarket listings
+
+### Partnerships
+- Supermarket partnerships for product promotion
+- Affiliate commission for product purchases
+- Data insights sharing with brands (anonymized)
+
+### Premium Features
+- Ad-free experience
+- Advanced filtering and search options
+- Offline access
+- Priority product identification
+- Enhanced analytics
+
+## 11. Success Metrics
+
+### User Engagement
+- Daily Active Users (DAU) / Monthly Active Users (MAU)
+- Average session duration
+- Retention rate (1-day, 7-day, 30-day)
+- Products added per user
+- Ratings submitted per user
+
+### Content Growth
+- Total products in database
+- Products added per day
+- Average ratings per product
+- Supermarkets covered
+
+### Technical Performance
+- App crash rate
+- Average load time
+- Search response time
+- API response times
+
+### Business Metrics
+- User acquisition cost
+- Revenue per user (when monetization is implemented)
+- Conversion rate to premium (future)
+
+## 12. Risks and Mitigation Strategies
+
+### Technical Risks
+- **Risk**: Poor image recognition accuracy
+  - **Mitigation**: Start with manual product entry, gradually improve image recognition algorithms
+- **Risk**: Database scaling issues with growth
+  - **Mitigation**: Implement proper indexing and optimize queries early
+
+### User Adoption Risks
+- **Risk**: Insufficient initial product data
+  - **Mitigation**: Seed the database with popular products in target markets, incentivize early users to add products
+- **Risk**: Low initial user engagement
+  - **Mitigation**: Implement gamification elements, offer rewards for active contributors
+
+### Business Risks
+- **Risk**: Similar competing product launches
+  - **Mitigation**: Focus on the expatriate niche and build strong community features
+- **Risk**: Monetization affecting user experience
+  - **Mitigation**: Ensure core features remain free, focus on value-add premium features
+
+## 13. Future Expansion Possibilities
+
+### Geographic Expansion
+- **Phase 1**: Focus on 3-5 countries with large expatriate populations
+- **Phase 2**: Expand to 10-15 major global destinations
+- **Phase 3**: Global coverage
+
+### Feature Expansion
+- **Recipes**: Suggest recipes based on available products
+- **Dietary Analysis**: Nutritional information and dietary compliance
+- **Shopping List**: Generate and optimize shopping lists
+- **Price Comparison**: Track and compare product prices across stores
+- **Language Translation**: Translate product packaging information
+
+### Platform Expansion
+- **Web Application**: Create complementary web interface
+- **Smart Watch Integration**: Quick access to shopping lists and ratings
+- **Voice Assistant Integration**: Voice search for products
+
+## 14. Conclusion
+
+Expat Food Finder addresses a significant pain point for expatriates worldwide by leveraging community knowledge to improve the grocery shopping experience in foreign countries. By focusing on the unique context of taste preferences based on country of origin, the app offers value that other food and shopping applications don't provide.
+
+The development approach prioritizes a solid MVP with core features that deliver immediate value, followed by carefully planned expansion of functionality and reach. With a scalable technical architecture and clear monetization path, Expat Food Finder has strong potential for sustainable growth while maintaining its mission to make expatriate life a little bit tastier.
+
+---
+
+## Appendix: Technical Implementation Notes
+
+### Authentication Flow
+```
+User -> Social Auth Provider -> Firebase Auth -> App Session
+```
+
+### Product Deduplication Algorithm
+Consider a product potentially duplicate if:
+- Similar name (>80% string similarity)
+- Same supermarket
+- Same category
+When potential duplicate detected, show user the existing product and ask for confirmation before adding.
+
+### Rating Calculation
+Country-specific average ratings calculated as:
+```
+avg_rating_by_country = sum(ratings_from_country) / count(ratings_from_country)
+```
+
+### Location Detection
+```
+1. Check for GPS permission
+2. If granted, get current location
+3. Query nearby supermarkets (within 100m radius)
+4. If in range, trigger notification "You're at [Supermarket]. Want to see products?"
+```
+
+### Image Storage Strategy
+- Original photos stored in Firebase Storage
+- Generate thumbnails (200x200) for list views
+- Generate medium images (600x600) for detail views
+- Use lazy loading for image galleries
