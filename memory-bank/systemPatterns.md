@@ -3,6 +3,7 @@
 ## Architecture Overview
 
 ### Application Architecture
+
 The Expat Food app follows a **layered architecture** with clear separation of concerns:
 
 ```
@@ -22,6 +23,7 @@ The Expat Food app follows a **layered architecture** with clear separation of c
 ```
 
 ### Component Hierarchy
+
 ```
 App Root (_layout.tsx)
 ├── Tab Navigation ((tabs)/_layout.tsx)
@@ -36,6 +38,7 @@ App Root (_layout.tsx)
 ## Design Patterns
 
 ### 1. Composition Pattern
+
 **Usage**: Building complex UI components from smaller, reusable pieces
 
 ```typescript
@@ -57,11 +60,13 @@ App Root (_layout.tsx)
 ```
 
 **Benefits**:
+
 - Highly reusable components
 - Easy to test individual pieces
 - Flexible layout arrangements
 
 ### 2. Container/Presenter Pattern
+
 **Usage**: Separating data logic from presentation logic
 
 ```typescript
@@ -79,6 +84,7 @@ const RestaurantListPresenter = ({ restaurants, loading }) => {
 ```
 
 ### 3. Custom Hook Pattern
+
 **Usage**: Encapsulating reusable business logic
 
 ```typescript
@@ -86,16 +92,16 @@ const RestaurantListPresenter = ({ restaurants, loading }) => {
 const useLocation = () => {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
-  
+
   useEffect(() => {
     // Location logic
   }, []);
-  
+
   return { location, error, requestPermission };
 };
 
 // API Hook
-const useRestaurants = (filters) => {
+const useRestaurants = filters => {
   return useQuery({
     queryKey: ['restaurants', filters],
     queryFn: () => fetchRestaurants(filters),
@@ -104,6 +110,7 @@ const useRestaurants = (filters) => {
 ```
 
 ### 4. Provider Pattern
+
 **Usage**: Sharing global state and context
 
 ```typescript
@@ -131,6 +138,7 @@ const UserProvider = ({ children }) => {
 ## State Management Patterns
 
 ### Global State (Zustand)
+
 ```typescript
 interface AppState {
   user: User | null;
@@ -139,25 +147,26 @@ interface AppState {
   updatePreferences: (prefs: Partial<UserPreferences>) => void;
 }
 
-const useAppStore = create<AppState>((set) => ({
+const useAppStore = create<AppState>(set => ({
   user: null,
   preferences: defaultPreferences,
-  setUser: (user) => set({ user }),
-  updatePreferences: (prefs) => 
-    set((state) => ({ 
-      preferences: { ...state.preferences, ...prefs } 
+  setUser: user => set({ user }),
+  updatePreferences: prefs =>
+    set(state => ({
+      preferences: { ...state.preferences, ...prefs },
     })),
 }));
 ```
 
 ### Server State (React Query)
+
 ```typescript
 // Query Keys Factory
 const queryKeys = {
   restaurants: {
     all: ['restaurants'] as const,
     lists: () => [...queryKeys.restaurants.all, 'list'] as const,
-    list: (filters: RestaurantFilters) => 
+    list: (filters: RestaurantFilters) =>
       [...queryKeys.restaurants.lists(), filters] as const,
     details: () => [...queryKeys.restaurants.all, 'detail'] as const,
     detail: (id: string) => [...queryKeys.restaurants.details(), id] as const,
@@ -175,6 +184,7 @@ const useRestaurants = (filters: RestaurantFilters) => {
 ```
 
 ### Local State (React Hook Form)
+
 ```typescript
 const RestaurantReviewForm = () => {
   const { control, handleSubmit, formState: { errors } } = useForm({
@@ -205,6 +215,7 @@ const RestaurantReviewForm = () => {
 ## Navigation Patterns
 
 ### File-Based Routing Structure
+
 ```
 app/
 ├── _layout.tsx                 # Root layout with providers
@@ -224,6 +235,7 @@ app/
 ```
 
 ### Navigation Hooks
+
 ```typescript
 // Typed navigation hook
 const useTypedNavigation = () => {
@@ -240,6 +252,7 @@ const useRestaurantId = () => {
 ## Data Flow Patterns
 
 ### Unidirectional Data Flow
+
 ```
 User Action → Event Handler → State Update → UI Re-render
      ↑                                           ↓
@@ -247,22 +260,23 @@ User Action → Event Handler → State Update → UI Re-render
 ```
 
 ### API Integration Pattern
+
 ```typescript
 // API Client Structure
 class RestaurantApiClient {
   private baseURL = 'https://api.expatfood.com';
-  
+
   async getRestaurants(filters: RestaurantFilters): Promise<Restaurant[]> {
     const response = await fetch(`${this.baseURL}/restaurants`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(filters),
     });
-    
+
     if (!response.ok) {
       throw new Error('Failed to fetch restaurants');
     }
-    
+
     return response.json();
   }
 }
@@ -289,6 +303,7 @@ const ApiErrorBoundary = ({ children }) => {
 ## UI Patterns
 
 ### Theming System
+
 ```typescript
 // Theme Definition
 const lightTheme = {
@@ -327,6 +342,7 @@ const ThemedText = ({ type = 'body', style, ...props }) => {
 ```
 
 ### Loading States Pattern
+
 ```typescript
 // Skeleton Loading
 const RestaurantCardSkeleton = () => (
@@ -342,7 +358,7 @@ const RestaurantCardSkeleton = () => (
 // Progressive Loading
 const RestaurantImage = ({ uri, placeholder }) => {
   const [loading, setLoading] = useState(true);
-  
+
   return (
     <View>
       {loading && <ImagePlaceholder />}
@@ -357,6 +373,7 @@ const RestaurantImage = ({ uri, placeholder }) => {
 ```
 
 ### List Optimization Pattern
+
 ```typescript
 // Optimized List Rendering
 const RestaurantList = ({ restaurants }) => {
@@ -383,6 +400,7 @@ const RestaurantList = ({ restaurants }) => {
 ## Performance Patterns
 
 ### Memoization Strategy
+
 ```typescript
 // Component Memoization
 const RestaurantCard = memo(({ restaurant }) => {
@@ -396,7 +414,7 @@ const RestaurantCard = memo(({ restaurant }) => {
 // Hook Memoization
 const useFilteredRestaurants = (restaurants, filters) => {
   return useMemo(() => {
-    return restaurants.filter(restaurant => 
+    return restaurants.filter(restaurant =>
       matchesFilters(restaurant, filters)
     );
   }, [restaurants, filters]);
@@ -404,6 +422,7 @@ const useFilteredRestaurants = (restaurants, filters) => {
 ```
 
 ### Lazy Loading Pattern
+
 ```typescript
 // Component Lazy Loading
 const RestaurantDetails = lazy(() => import('./RestaurantDetails'));
@@ -411,7 +430,7 @@ const RestaurantDetails = lazy(() => import('./RestaurantDetails'));
 // Image Lazy Loading
 const LazyImage = ({ uri, ...props }) => {
   const [inView, setInView] = useState(false);
-  
+
   return (
     <View onLayout={() => setInView(true)}>
       {inView ? (
@@ -427,16 +446,17 @@ const LazyImage = ({ uri, ...props }) => {
 ## Error Handling Patterns
 
 ### Graceful Degradation
+
 ```typescript
 // Network Error Handling
-const useRestaurantsWithFallback = (filters) => {
+const useRestaurantsWithFallback = filters => {
   const query = useRestaurants(filters);
   const cachedData = useMMKVObject('cached_restaurants');
-  
+
   if (query.error && !query.data) {
     return { ...query, data: cachedData };
   }
-  
+
   return query;
 };
 
@@ -444,7 +464,7 @@ const useRestaurantsWithFallback = (filters) => {
 const useLocationWithFallback = () => {
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
-  
+
   useEffect(() => {
     if (Platform.OS === 'web') {
       // Use browser geolocation
@@ -452,7 +472,7 @@ const useLocationWithFallback = () => {
       // Use Expo Location
     }
   }, []);
-  
+
   return { location, error };
 };
 ```
@@ -460,13 +480,14 @@ const useLocationWithFallback = () => {
 ## Testing Patterns
 
 ### Component Testing Structure
+
 ```typescript
 // Test Utilities
 const renderWithProviders = (component, options = {}) => {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
-  
+
   return render(
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
@@ -492,4 +513,4 @@ describe('RestaurantCard', () => {
     expect(screen.getByText('Test Restaurant')).toBeInTheDocument();
   });
 });
-``` 
+```

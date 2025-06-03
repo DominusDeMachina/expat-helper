@@ -5,4 +5,4 @@ const {
 
 const config = getDefaultConfig(__dirname);
 
-module.exports = wrapWithReanimatedMetroConfig(config); 
+module.exports = wrapWithReanimatedMetroConfig(config);

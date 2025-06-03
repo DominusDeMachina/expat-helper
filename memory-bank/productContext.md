@@ -1,112 +1,145 @@
-# Product Context: Expat Food
+# Product Context: Expat Food Finder
 
 ## Problem Statement
 
-### The Expat Food Challenge
-Living abroad as an expatriate presents unique challenges, particularly around food and dining. Expats often struggle with:
+### The Expat Grocery Shopping Challenge
 
-- **Homesickness through Food**: Missing familiar flavors and comfort foods from home
-- **Discovery Difficulty**: Finding restaurants that serve authentic cuisine from their home country
-- **Grocery Shopping**: Locating stores that sell specific ingredients or products from home
-- **Quality Uncertainty**: Not knowing which establishments offer authentic, high-quality food
-- **Community Connection**: Lacking recommendations from fellow expats or locals who understand their needs
-- **Language Barriers**: Difficulty communicating food preferences in a new language
+Living abroad as an expatriate presents unique challenges, particularly around **grocery shopping** and finding familiar **food products**. Expats often struggle with:
+
+- **Product Uncertainty**: Even familiar-looking products may taste completely different from home country expectations
+- **Cultural Taste Differences**: Local popular products may be unpalatable to people from different culinary backgrounds
+- **Comfort Food Discovery**: Difficulty locating products that taste similar to those from home
+- **Language Barriers**: Product packaging in unfamiliar languages makes it hard to understand ingredients or preparation
+- **Supermarket Navigation**: Not knowing which stores carry products that match their taste preferences
+- **Community Knowledge Gap**: Lacking recommendations from fellow expats who understand their specific taste needs
 
 ### Market Opportunity
+
 - **Global Expat Population**: Over 280 million international migrants worldwide
-- **Urban Concentration**: Expats typically concentrate in major cities with diverse food scenes
+- **Urban Concentration**: Expats typically concentrate in major cities with diverse supermarket options
 - **Digital Natives**: Modern expats are mobile-first and rely heavily on apps for discovery
 - **Community-Driven**: Strong tendency to share recommendations within expat communities
+- **Grocery Shopping Frequency**: Regular, recurring need (weekly/bi-weekly grocery shopping)
 
 ## Solution Vision
 
 ### Core Value Proposition
-"Connect expats with the tastes of home, wherever they are in the world."
+
+"Help expats discover food products in supermarkets that taste like home, wherever they are in the world."
 
 ### How It Works
 
-#### For Food Seekers (Primary Users)
-1. **Profile Setup**: Users specify their home country and current location
-2. **Discover**: Browse restaurants, markets, and grocery stores by home cuisine
-3. **Explore**: View detailed information, photos, menus, and authentic reviews
-4. **Navigate**: Get directions and contact information for chosen establishments
-5. **Review**: Share experiences to help fellow expats
-6. **Save**: Create personal collections of favorite places
+#### For Product Seekers (Primary Users)
 
-#### For Business Owners (Secondary Users)
-1. **List Business**: Add restaurant or store to the platform
-2. **Showcase Authenticity**: Highlight home-country connections and specialties
-3. **Engage Community**: Respond to reviews and build expat customer base
-4. **Promote Specials**: Share events, new dishes, or seasonal offerings
+1. **Profile Setup**: Users specify their country of origin and current location
+2. **Discover Products**: Browse food products by supermarket or search by name/category
+3. **Cultural Context**: View ratings and reviews from people with similar cultural backgrounds
+4. **Supermarket Guidance**: Find which local supermarkets carry products they'll enjoy
+5. **Rate & Review**: Share experiences to help fellow expats avoid disappointments
+6. **Personal Lists**: Create shopping lists and save favorite products
+
+#### For Community Contributors (Power Users)
+
+1. **Add Products**: Photograph and add new products found in local supermarkets
+2. **Cultural Reviews**: Provide detailed taste comparisons to home country equivalents
+3. **Supermarket Mapping**: Help map which products are available at which stores
+4. **Follow System**: Build reputation as trusted reviewer within expat community
 
 ## User Experience Goals
 
 ### Emotional Experience
-- **Comfort**: Feeling connected to home through familiar food
-- **Discovery**: Excitement of finding new authentic places
-- **Community**: Sense of belonging within the expat community
-- **Trust**: Confidence in recommendations from fellow expats
+
+- **Confidence**: Shopping with certainty about product taste and quality
+- **Discovery**: Excitement of finding products that taste like home
+- **Community**: Connection with fellow expats who share similar taste challenges
+- **Comfort**: Reducing anxiety around grocery shopping in a foreign country
 
 ### Functional Experience
-- **Intuitive**: Easy to find what you're looking for quickly
-- **Reliable**: Accurate information that's always up-to-date
-- **Personal**: Tailored recommendations based on preferences and location
-- **Social**: Easy sharing and community interaction
+
+- **Quick Discovery**: Rapidly find products that match taste preferences
+- **Reliable Information**: Accurate product ratings from culturally-relevant reviewers
+- **Supermarket Integration**: Know exactly where to find specific products
+- **Cultural Context**: Reviews that explain taste differences in familiar terms
 
 ## Key Features Priority
 
 ### MVP (Minimum Viable Product)
-1. **User Registration**: Home country and current location setup
-2. **Basic Search**: Find restaurants by cuisine type
-3. **Listing Details**: View restaurant information and reviews
-4. **Simple Reviews**: Rate and review establishments
-5. **Location Services**: Map integration and directions
+
+1. **User Registration**: Country of origin and current location setup
+2. **Product Database**: Browse and search food products by supermarket
+3. **Rating System**: 3-tier rating (inedible, ordinary, delicious) with comments
+4. **Supermarket Integration**: View products available at specific stores
+5. **Basic Reviews**: Rate products with cultural context explanations
 
 ### Phase 2 Features
-1. **Advanced Filtering**: Price range, distance, dietary restrictions
-2. **Photo Sharing**: Visual reviews and menu photos
-3. **Favorites System**: Save and organize preferred places
-4. **Social Features**: Follow other users and share recommendations
+
+1. **Advanced Search**: Filter by dietary restrictions, product categories, price range
+2. **Photo Reviews**: Visual product reviews and packaging photos
+3. **Personal Lists**: Shopping lists and favorite product collections
+4. **Social Features**: Follow trusted reviewers and share recommendations
 
 ### Phase 3 Features
-1. **Grocery Store Integration**: Find specific ingredients and products
-2. **Event Discovery**: Food festivals, cultural events, cooking classes
-3. **Recipe Sharing**: Community recipes using local ingredients
-4. **Business Tools**: Analytics and promotion features for restaurants
+
+1. **Barcode Scanning**: Quick product identification and lookup
+2. **Store Mapping**: Indoor navigation to find products within supermarkets
+3. **Recipe Integration**: Suggest recipes using available local products
+4. **Price Tracking**: Monitor product prices across different supermarkets
 
 ## Success Metrics
 
 ### User Engagement
-- **Daily Active Users**: Target 20% of registered users
-- **Session Duration**: Average 5+ minutes per session
-- **Return Rate**: 60% of users return within 7 days
+
+- **Weekly Active Users**: Target 40% of registered users (grocery shopping frequency)
+- **Products Added**: Average 2+ products added per active user monthly
+- **Review Quality**: 80% of products have detailed cultural context reviews
 
 ### Content Quality
-- **Review Coverage**: 80% of listings have at least 3 reviews
-- **Photo Coverage**: 70% of listings have user-submitted photos
-- **Information Accuracy**: Less than 5% of business information reports as incorrect
+
+- **Product Coverage**: 1000+ products across major supermarket chains
+- **Supermarket Coverage**: 80% of major supermarkets in target cities mapped
+- **Review Depth**: Average review length >50 words with cultural comparisons
 
 ### Business Impact
-- **Restaurant Partnerships**: 500+ verified business listings in major cities
+
+- **Supermarket Partnerships**: Integration with 10+ major supermarket chains
 - **User Satisfaction**: 4.5+ star average app store rating
-- **Community Growth**: 10,000+ active monthly users within first year
+- **Community Growth**: 5,000+ active monthly users within first year
 
 ## Competitive Landscape
 
-### Direct Competitors
-- **Yelp/Google Reviews**: General restaurant discovery (lacks expat focus)
-- **Foursquare**: Location-based recommendations (not cuisine-specific)
-- **Zomato**: Food delivery and discovery (limited expat community features)
+### Adjacent Competitors
+
+- **Yuka/Open Food Facts**: Nutritional information focus (lacks cultural taste context)
+- **Grocery Delivery Apps**: Product availability (no taste/quality ratings)
+- **General Review Apps**: Restaurant focus (not supermarket product specific)
 
 ### Competitive Advantages
-1. **Expat-Specific**: Purpose-built for expatriate needs and preferences
-2. **Authenticity Focus**: Emphasis on genuine home-country cuisine
-3. **Community-Driven**: Reviews and recommendations from fellow expats
-4. **Cultural Context**: Understanding of homesickness and cultural food needs
+
+1. **Cultural Context**: Ratings specifically from users with similar taste backgrounds
+2. **Supermarket Focus**: Designed for grocery shopping, not dining out
+3. **Expat Community**: Purpose-built for expatriate grocery shopping challenges
+4. **Product-Specific**: Individual food product ratings, not store ratings
+
+## Data Model Focus
+
+### Core Entities
+
+- **Products**: Individual food items with photos, descriptions, categories
+- **Supermarkets**: Store locations, chains, product availability
+- **Ratings**: Cultural context ratings with detailed taste comparisons
+- **Users**: Country of origin, current location, shopping preferences
+
+### Key Relationships
+
+- Products ↔ Supermarkets (availability mapping)
+- Users ↔ Products (ratings with cultural context)
+- Users ↔ Users (following system for trusted recommendations)
 
 ## Long-term Vision
-Transform from a simple restaurant finder into a comprehensive platform that helps expats maintain cultural connections through food, including:
-- **Global Network**: Presence in every major expat destination
-- **Cultural Events**: Integration with food festivals and cultural celebrations
-- **Recipe Exchange**: Platform for sharing adapted recipes using local ingredients
-- **Business Ecosystem**: Comprehensive tools for food businesses serving expat communities 
+
+Transform from a simple product finder into a comprehensive platform that helps expats navigate grocery shopping globally, including:
+
+- **Global Coverage**: Product databases in every major expat destination
+- **Cultural Intelligence**: AI-powered taste preference matching
+- **Shopping Optimization**: Complete grocery shopping workflow integration
+- **Community Ecosystem**: Trusted network of expat food reviewers worldwide

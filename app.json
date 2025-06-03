@@ -8,6 +8,10 @@
     "scheme": "expatfood",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/76b7d719-4395-4cb7-8eeb-13cef2c341bf"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.furduy.expatfood"
@@ -27,6 +31,7 @@
     },
     "plugins": [
       "expo-router",
+      "expo-updates",
       [
         "expo-splash-screen",
         {
@@ -39,6 +44,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "76b7d719-4395-4cb7-8eeb-13cef2c341bf"
+      }
+    },
+    "owner": "gennadiy"
   }
 }

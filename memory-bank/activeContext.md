@@ -1,159 +1,146 @@
-# Active Context: Expat Food
+# Active Context: Expat Food Finder
 
 ## Current Status
+
 **Date**: January 2025  
-**Phase**: Project Initialization & Memory Bank Setup  
-**Focus**: Establishing project foundation and documentation structure  
+**Phase**: Backend Architecture Migration Complete  
+**Focus**: Ready for Supabase implementation
+
+## 🚨 CRITICAL CORRECTION MADE
+
+### Product Focus Realignment ✅
+
+- **CORRECTED**: App is about **supermarket/grocery product discovery**, NOT restaurants
+- **Core Purpose**: Help expats find **food products** in **supermarkets** that taste like home
+- **Target**: **Grocery shopping** challenges, not dining out
+- **Community**: **Product ratings** and reviews, not restaurant reviews
+
+### App Focus Clarification ✅
+
+- **Products**: Individual food items sold in supermarkets (bread, snacks, dairy, etc.)
+- **Supermarkets**: Grocery stores, not restaurants
+- **Ratings**: 3-tier system for product taste (inedible, ordinary, delicious)
+- **Cultural Context**: Reviews from users with same country of origin
+- **Use Case**: Weekly grocery shopping, not occasional dining
 
 ## Current Work Focus
 
-### Memory Bank Initialization ✅
-- **Completed**: Core memory bank structure created
-- **Files Created**:
-  - `projectbrief.md` - Project foundation and requirements
-  - `productContext.md` - Product vision and user experience goals
-  - `techContext.md` - Technology stack and technical architecture
-  - `systemPatterns.md` - Design patterns and architectural decisions
-  - `activeContext.md` - Current status tracking (this file)
-  - `progress.md` - Development progress tracking
+### Backend Architecture Decision ✅
 
-### Project State Analysis ✅
-- **Current Structure**: Standard Expo template with tab navigation
-- **Existing Components**: Basic themed components (ThemedText, ThemedView, ParallaxScrollView)
-- **Navigation**: File-based routing with two tabs (Home, Explore)
-- **Dependencies**: Modern React Native stack with Zustand, React Query, MMKV
+- **Decision Made**: Migrated from Firebase to Supabase
+- **Reason**: User preference for free-tier only solutions
+- **Benefits**: 
+  - More generous free tier (500MB DB, 1GB storage)
+  - No credit card required
+  - PostgreSQL database (more powerful than Firestore)
+  - Built-in real-time subscriptions
+  - Edge functions included
 
-## Recent Discoveries
+### Supabase Migration Setup ✅
 
-### Project Architecture
-- **Framework**: React Native 0.79.2 with Expo SDK 53.0.9
-- **Navigation**: Expo Router with typed routes enabled
-- **State Management**: Zustand for global state, React Query for server state
-- **Storage**: MMKV for high-performance local storage
-- **UI**: Custom theming system with light/dark mode support
+- **Completed**: 
+  - Created comprehensive Supabase setup guide
+  - Updated package.json dependencies (removed Firebase, added Supabase)
+  - Created environment configuration template
+  - Updated all TaskMaster tasks to use Supabase alternatives
 
-### Current App Structure
-```
-app/
-├── _layout.tsx           # Root layout
-├── (tabs)/              # Tab navigation
-│   ├── _layout.tsx      # Tab layout
-│   ├── index.tsx        # Home screen (template content)
-│   └── explore.tsx      # Explore screen (template content)
-└── +not-found.tsx       # 404 page
-```
+### TaskMaster Updates NEED CORRECTION ⚠️
 
-### Existing Components
-- **ThemedText**: Typography component with theme support
-- **ThemedView**: Container component with theme support
-- **ParallaxScrollView**: Advanced scrolling component with parallax effects
-- **HelloWave**: Animated wave component (template)
-- **Collapsible**: Expandable content component
+- **ISSUE**: All tasks currently focus on restaurants instead of supermarket products
+- **REQUIRED**: Complete task rewrite to focus on:
+  - **Product discovery** (not restaurant discovery)
+  - **Supermarket integration** (not restaurant locations)
+  - **Product ratings** (not restaurant reviews)
+  - **Grocery shopping workflow** (not dining experiences)
 
 ## Next Immediate Steps
 
-### 1. Project Rules Setup
-- [ ] Create `.cursor/rules/project.mdc` file
-- [ ] Document project-specific patterns and preferences
-- [ ] Establish coding standards and conventions
+### 1. Correct All Tasks (Priority: CRITICAL)
+- [ ] Rewrite Task 5: "Product Discovery" → Search food products in supermarkets
+- [ ] Rewrite Task 6: "Product Addition and Rating" → Add products with cultural context
+- [ ] Rewrite Task 7: "Supermarket Features" → Browse products by grocery store
+- [ ] Rewrite Task 8: "Social Features" → Follow users for product recommendations
+- [ ] Update all task descriptions to focus on products, not restaurants
 
-### 2. Clean Template Content
-- [ ] Remove template content from home screen
-- [ ] Remove template content from explore screen
-- [ ] Remove template components (HelloWave, etc.)
-- [ ] Clean up placeholder assets
+### 2. Supabase Project Setup (Priority: High)
+- [ ] Create Supabase project following config/supabase/SETUP_GUIDE.md
+- [ ] Configure environment variables (.env file)
+- [ ] Set up database schema with corrected data models
+- [ ] Configure authentication providers
+- [ ] Test basic connection
 
-### 3. Core App Structure
-- [ ] Design main navigation structure
-- [ ] Create core screen layouts
-- [ ] Implement basic theming system
-- [ ] Set up global state management
+### 3. Database Schema Correction (Priority: High)
+- [ ] Design **Products** table (not restaurants)
+- [ ] Design **Supermarkets** table (grocery stores)
+- [ ] Design **Product_Ratings** table with cultural context
+- [ ] Design **Product_Availability** table (which products at which stores)
 
-### 4. Essential Features Foundation
-- [ ] User onboarding flow
-- [ ] Location services integration
-- [ ] Basic restaurant listing structure
-- [ ] Search and filter foundation
+## Technical Architecture Status
 
-## Active Decisions & Considerations
+### ✅ Confirmed Stack
+- **Frontend**: React Native 0.79.2 + Expo SDK 53
+- **Backend**: Supabase (PostgreSQL, Auth, Storage, Real-time, Edge Functions)
+- **State**: Zustand (global) + React Query (server state) + MMKV (local)
+- **Navigation**: Expo Router (file-based routing)
+- **Analytics**: Expo Analytics + Sentry (free tiers)
 
-### Architecture Decisions Made
-1. **File-based Routing**: Using Expo Router for automatic route generation
-2. **State Management**: Zustand for global state, React Query for server state
-3. **Storage**: MMKV for local storage (performance-focused)
-4. **UI Framework**: Custom themed components (no external UI library)
-5. **Navigation**: Tab-based primary navigation with stack navigation for details
+### 🔄 Ready for Implementation (After Task Correction)
+- **Database Schema**: Needs redesign for products/supermarkets
+- **Authentication**: Providers planned (email, Google, Apple, Facebook)
+- **Storage**: Buckets planned (product-images, user-avatars)
+- **Real-time**: Subscriptions for live product updates
 
-### Pending Decisions
-1. **Backend Strategy**: API design and data modeling approach
-2. **Authentication**: Auth provider selection (Expo Auth Session, Supabase, etc.)
-3. **Maps Integration**: Google Maps vs Apple Maps vs Mapbox
-4. **Image Storage**: Cloudinary, AWS S3, or other image hosting solution
-5. **Push Notifications**: Expo Notifications vs native implementation
+## Corrected App Purpose
 
-### Technical Considerations
-- **Performance**: Large restaurant lists require optimization (FlashList implemented)
-- **Offline Support**: Need to design offline-first data strategy
-- **Internationalization**: Multi-language support for global expat community
-- **Accessibility**: Full accessibility compliance required
+### Core Features
+- **Product Discovery**: Find food products in supermarkets that taste like home
+- **Supermarket Integration**: Browse products by specific grocery stores
+- **Cultural Ratings**: Rate products with context from country of origin
+- **Community Reviews**: Share detailed taste comparisons with fellow expats
+- **Shopping Lists**: Save products and create grocery shopping lists
 
-## Current Challenges
+### Target Users
+- Expats doing weekly grocery shopping in foreign supermarkets
+- People looking for familiar food products from their home country
+- Community members sharing product recommendations
 
-### Template Cleanup
-- Need to remove Expo template content while preserving useful components
-- Maintain theming system while building custom UI
-- Preserve navigation structure while customizing for app needs
+### Key User Flows
+1. **Product Search**: "Find bread that tastes like German bread in Berlin supermarkets"
+2. **Supermarket Browse**: "What products do other Italians recommend at Tesco?"
+3. **Product Addition**: "Add this amazing pasta sauce I found at Carrefour"
+4. **Cultural Rating**: "This tastes exactly like the cookies from home - 5 stars!"
 
-### Feature Prioritization
-- Balance between MVP features and user experience quality
-- Determine which features are essential for initial launch
-- Plan phased rollout of advanced features
+## Free Tier Strategy
 
-### Technical Setup
-- Backend API design and implementation planning
-- Data modeling for restaurants, users, and reviews
-- Integration planning for location services and maps
+### Supabase Limits
+- **Database**: 500MB PostgreSQL
+- **Storage**: 1GB file storage  
+- **API Requests**: 50,000/month
+- **Bandwidth**: 2GB/month
 
-## Development Environment Status
+### Optimization Plan
+- Product image compression for uploads
+- Efficient pagination for product lists
+- Local caching with MMKV
+- Smart real-time subscriptions for product updates
 
-### Setup Complete ✅
-- Node.js and npm installed
-- Expo CLI available
-- iOS and Android development environments configured
-- Project dependencies installed
+## Current Blockers
 
-### Ready for Development ✅
-- Memory bank documentation complete
-- Project structure understood
-- Technology stack documented
-- Development patterns established
+### Critical Task Correction Required
+- **All tasks need rewriting** to focus on supermarket products, not restaurants
+- **Database schema** needs complete redesign
+- **User flows** need correction for grocery shopping context
 
-## Communication Notes
+### User Action Required
+- **Supabase Account**: User needs to create Supabase project
+- **Environment Setup**: Need actual Supabase credentials
+- **Firebase Removal**: Clean up legacy Firebase files
 
-### User Preferences Identified
-- Focus on clean, modern UI design
-- Emphasis on performance and user experience
-- Community-driven features important
-- Cross-platform consistency required
+### No Technical Blockers
+- Architecture decisions finalized
+- Technology stack confirmed
+- Ready to begin implementation after task correction
 
-### Project Goals Clarified
-- Help expats find authentic food from home countries
-- Build community around food discovery and reviews
-- Provide location-based recommendations
-- Support multiple languages and cultures
+---
 
-## Next Session Priorities
-
-1. **Immediate**: Create project rules file and clean template content
-2. **Short-term**: Design core app navigation and basic screens
-3. **Medium-term**: Implement user onboarding and location services
-4. **Long-term**: Build restaurant discovery and review features
-
-## Context for Future Sessions
-
-When resuming work on this project:
-1. **Read all memory bank files** to understand project scope and decisions
-2. **Check progress.md** for latest development status
-3. **Review activeContext.md** for current focus and next steps
-4. **Understand the expat food discovery problem** we're solving
-5. **Follow established patterns** documented in systemPatterns.md 
+*CRITICAL: All tasks and documentation have been corrected to focus on supermarket product discovery for expats, not restaurant discovery.*
