@@ -21,15 +21,31 @@ VALUES ('supermarket-logos', 'supermarket-logos', true)
 ON CONFLICT (id) DO NOTHING;
 
 -- =============================================
--- STORAGE POLICIES
+-- STORAGE POLICIES (UPDATED FOR CONSISTENCY)
 -- =============================================
+
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Anyone can view product images" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can upload product images" ON storage.objects;
+DROP POLICY IF EXISTS "Users can update own product images" ON storage.objects;
+DROP POLICY IF EXISTS "Users can delete own product images" ON storage.objects;
+
+DROP POLICY IF EXISTS "Anyone can view user avatars" ON storage.objects;
+DROP POLICY IF EXISTS "Users can upload own avatar" ON storage.objects;
+DROP POLICY IF EXISTS "Users can update own avatar" ON storage.objects;
+DROP POLICY IF EXISTS "Users can delete own avatar" ON storage.objects;
+
+DROP POLICY IF EXISTS "Anyone can view supermarket logos" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can upload supermarket logos" ON storage.objects;
+DROP POLICY IF EXISTS "Users can update own supermarket logos" ON storage.objects;
+DROP POLICY IF EXISTS "Users can delete own supermarket logos" ON storage.objects;
 
 -- Product Images Policies
 -- Anyone can view product images
 CREATE POLICY "Anyone can view product images" ON storage.objects
   FOR SELECT USING (bucket_id = 'product-images');
 
--- Authenticated users can upload product images
+-- Authenticated users can upload product images to their own folder
 CREATE POLICY "Authenticated users can upload product images" ON storage.objects
   FOR INSERT WITH CHECK (
     bucket_id = 'product-images' 
@@ -78,21 +94,29 @@ CREATE POLICY "Users can delete own avatar" ON storage.objects
     AND auth.uid()::text = (storage.foldername(name))[1]
   );
 
--- Supermarket Logos Policies
+-- Supermarket Logos Policies (UPDATED FOR CONSISTENCY)
 -- Anyone can view supermarket logos
 CREATE POLICY "Anyone can view supermarket logos" ON storage.objects
   FOR SELECT USING (bucket_id = 'supermarket-logos');
 
--- Authenticated users can upload supermarket logos
+-- Authenticated users can upload supermarket logos to their own folder
 CREATE POLICY "Authenticated users can upload supermarket logos" ON storage.objects
   FOR INSERT WITH CHECK (
     bucket_id = 'supermarket-logos' 
     AND auth.role() = 'authenticated'
+    AND (storage.foldername(name))[1] = auth.uid()::text
   );
 
 -- Users can update supermarket logos they uploaded
 CREATE POLICY "Users can update own supermarket logos" ON storage.objects
   FOR UPDATE USING (
+    bucket_id = 'supermarket-logos' 
+    AND auth.uid()::text = (storage.foldername(name))[1]
+  );
+
+-- Users can delete their own supermarket logos
+CREATE POLICY "Users can delete own supermarket logos" ON storage.objects
+  FOR DELETE USING (
     bucket_id = 'supermarket-logos' 
     AND auth.uid()::text = (storage.foldername(name))[1]
   );

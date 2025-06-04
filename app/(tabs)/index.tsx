@@ -1,4 +1,5 @@
 import { DatabaseExamples, testDatabaseIntegration } from '@/lib/database.test';
+import { StorageExamples, createMockImageFile, runStorageIntegrationTests } from '@/lib/storage.test';
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
@@ -12,7 +13,9 @@ import { useState } from 'react';
 export default function HomeScreen() {
   const { user, profile, signOut } = useAuth();
   const [isTestingDatabase, setIsTestingDatabase] = useState(false);
+  const [isTestingStorage, setIsTestingStorage] = useState(false);
   const [testResults, setTestResults] = useState<string[]>([]);
+  const [storageResults, setStorageResults] = useState<string[]>([]);
   const [isCreatingData, setIsCreatingData] = useState(false);
 
   const handleSignOut = async () => {
@@ -42,6 +45,10 @@ export default function HomeScreen() {
     setTestResults(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${result}`]);
   };
 
+  const addStorageResult = (result: string) => {
+    setStorageResults(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${result}`]);
+  };
+
   const runDatabaseTests = async () => {
     setIsTestingDatabase(true);
     setTestResults([]);
@@ -58,6 +65,78 @@ export default function HomeScreen() {
       addTestResult(`❌ Database test error: ${error}`);
     } finally {
       setIsTestingDatabase(false);
+    }
+  };
+
+  const runStorageTests = async () => {
+    setIsTestingStorage(true);
+    setStorageResults([]);
+    addStorageResult('🧪 Starting storage integration tests...');
+    
+    try {
+      const result = await runStorageIntegrationTests();
+      
+      // Add results to the UI
+      result.results.forEach(testResult => {
+        addStorageResult(testResult);
+      });
+      
+      if (result.errors.length > 0) {
+        addStorageResult('🚨 Some tests encountered errors:');
+        result.errors.forEach(error => {
+          addStorageResult(`   ${error}`);
+        });
+      }
+      
+      if (result.success) {
+        addStorageResult('🎯 ✅ ALL STORAGE TESTS PASSED!');
+      } else {
+        addStorageResult('🎯 ❌ SOME STORAGE TESTS FAILED');
+      }
+    } catch (error) {
+      addStorageResult(`❌ Storage test error: ${error}`);
+    } finally {
+      setIsTestingStorage(false);
+    }
+  };
+
+  const testImageUpload = async () => {
+    if (!user?.id) {
+      addStorageResult('❌ Must be logged in to test image uploads');
+      return;
+    }
+
+    addStorageResult('📸 Testing image upload functionality...');
+    addStorageResult(`👤 Using authenticated user ID: ${user.id}`);
+    
+    try {
+      // Create a mock image file for testing
+      const mockImage = createMockImageFile('test-product.jpg', 1024);
+      addStorageResult(`📷 Created test image: ${mockImage.name} (${mockImage.size} bytes)`);
+      
+      // Test product image upload
+      const productId = 'test-product-' + Date.now();
+      const uploadResult = await StorageExamples.uploadProductImage(user.id, productId, mockImage);
+      
+      if (uploadResult.success) {
+        addStorageResult(`✅ Product image uploaded successfully!`);
+        addStorageResult(`🔗 Public URL: ${uploadResult.data?.publicUrl}`);
+        
+        // Test user avatar upload
+        const avatarFile = createMockImageFile('test-avatar.png', 512);
+        const avatarResult = await StorageExamples.uploadUserAvatar(user.id, avatarFile);
+        
+        if (avatarResult.success) {
+          addStorageResult(`✅ Avatar uploaded successfully!`);
+          addStorageResult(`👤 Avatar URL: ${avatarResult.data?.publicUrl}`);
+        } else {
+          addStorageResult(`❌ Avatar upload failed: ${avatarResult.error}`);
+        }
+      } else {
+        addStorageResult(`❌ Product image upload failed: ${uploadResult.error}`);
+      }
+    } catch (error) {
+      addStorageResult(`❌ Image upload test error: ${error}`);
     }
   };
 
@@ -137,6 +216,10 @@ export default function HomeScreen() {
 
   const clearResults = () => {
     setTestResults([]);
+  };
+
+  const clearStorageResults = () => {
+    setStorageResults([]);
   };
 
   return (
@@ -238,6 +321,58 @@ export default function HomeScreen() {
             <ThemedText type="defaultSemiBold" style={styles.resultsTitle}>Test Results:</ThemedText>
             <ScrollView style={styles.resultsScroll} showsVerticalScrollIndicator={true}>
               {testResults.map((result, index) => (
+                <ThemedText key={index} style={styles.resultText}>
+                  {result}
+                </ThemedText>
+              ))}
+            </ScrollView>
+          </ThemedView>
+        )}
+      </ThemedView>
+
+      {/* Storage Testing Section */}
+      <ThemedView style={styles.stepContainer}>
+        <ThemedText type="subtitle">🧪 Storage Testing</ThemedText>
+        <ThemedText style={styles.description}>
+          Test the storage functionality to ensure everything is working correctly.
+        </ThemedText>
+        
+        <ThemedView style={styles.buttonContainer}>
+          <TouchableOpacity 
+            style={[styles.testButton, styles.primaryButton]} 
+            onPress={runStorageTests}
+            disabled={isTestingStorage}
+          >
+            {isTestingStorage ? (
+              <ActivityIndicator color="#fff" size="small" />
+            ) : (
+              <ThemedText style={styles.buttonText}>Run Integration Tests</ThemedText>
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={[styles.testButton, styles.secondaryButton]} 
+            onPress={testImageUpload}
+          >
+            <ThemedText style={styles.secondaryButtonText}>Test Image Upload</ThemedText>
+          </TouchableOpacity>
+
+          {storageResults.length > 0 && (
+            <TouchableOpacity 
+              style={[styles.testButton, styles.clearButton]} 
+              onPress={clearStorageResults}
+            >
+              <ThemedText style={styles.clearButtonText}>Clear Results</ThemedText>
+            </TouchableOpacity>
+          )}
+        </ThemedView>
+
+        {/* Test Results Display */}
+        {storageResults.length > 0 && (
+          <ThemedView style={styles.resultsContainer}>
+            <ThemedText type="defaultSemiBold" style={styles.resultsTitle}>Test Results:</ThemedText>
+            <ScrollView style={styles.resultsScroll} showsVerticalScrollIndicator={true}>
+              {storageResults.map((result, index) => (
                 <ThemedText key={index} style={styles.resultText}>
                   {result}
                 </ThemedText>
@@ -359,5 +494,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     fontFamily: 'monospace',
     lineHeight: 18,
+  },
+  clearButton: {
+    backgroundColor: '#ff4444',
+  },
+  clearButtonText: {
+    color: 'white',
+    fontWeight: '600',
+    fontSize: 16,
   },
 });
