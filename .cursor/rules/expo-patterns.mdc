@@ -1,0 +1,55 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Expo-First Component Strategy
+
+## **Component Selection Priority**
+
+- **Primary Choice**: Always use Expo components when available
+- **Secondary Choice**: React Native components only when Expo doesn't provide the functionality
+- **Rationale**: Better integration, consistent APIs, superior cross-platform compatibility
+
+## **Common Component Mappings**
+
+- **Icons**: Use `@expo/vector-icons` instead of `react-native-vector-icons`
+- **Navigation**: Use Expo Router instead of React Navigation (when applicable)
+- **Storage**: Use Expo SecureStore instead of AsyncStorage for sensitive data
+- **Camera**: Use `expo-camera` instead of `react-native-camera`
+- **Image Picker**: Use `expo-image-picker` instead of `react-native-image-picker`
+- **Permissions**: Use `expo-permissions` instead of `react-native-permissions`
+
+## **Context7 Integration**
+
+- **Documentation Help**: Use Context7 for Expo component documentation and examples
+- **Best Practices**: Leverage Context7 for up-to-date Expo patterns and APIs
+- **Troubleshooting**: Consult Context7 for Expo-specific solutions
+
+## **Import Examples**
+
+```typescript
+// ✅ DO: Use Expo components first
+import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import * as SecureStore from 'expo-secure-store';
+
+// ❌ DON'T: Use React Native equivalents when Expo provides the functionality
+import Icon from 'react-native-vector-icons/Ionicons';
+import { launchImageLibrary } from 'react-native-image-picker';
+```
+
+## **Decision Matrix**
+
+When choosing components, ask:
+1. **Does Expo provide this functionality?** → Use Expo component
+2. **Is the Expo component mature and well-documented?** → Use Expo component
+3. **Does the React Native alternative offer critical features missing in Expo?** → Consider React Native, but document the decision
+4. **Is this a core React Native component (View, Text, etc.)?** → Use React Native component
+
+## **Context7 Usage Pattern**
+
+- Before implementing new features, check Context7 for Expo-specific documentation
+- Use Context7 to verify current best practices for Expo components
+- Leverage Context7 for troubleshooting Expo-specific issues
+- Reference Context7 for up-to-date API examples and patterns
