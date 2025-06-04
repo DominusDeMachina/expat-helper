@@ -37,7 +37,59 @@ App Root (_layout.tsx)
 
 ## Design Patterns
 
-### 1. Composition Pattern
+### 1. Safe Area Handling Pattern ⭐ **CRITICAL**
+
+**Usage**: All screens MUST use SafeAreaView to handle device safe areas (notches, status bars, home indicators)
+
+**Implementation**:
+```typescript
+// Root Layout (Required)
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+export default function RootLayout() {
+  return (
+    <SafeAreaProvider>
+      {/* App content */}
+    </SafeAreaProvider>
+  );
+}
+
+// Individual Screens (Required)
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+export default function MyScreen() {
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      {/* Screen content */}
+    </SafeAreaView>
+  );
+}
+
+// Reusable Screen Component (Recommended)
+import { Screen } from '@/components/ui/Screen';
+
+export default function MyScreen() {
+  return (
+    <Screen>
+      {/* Screen content */}
+    </Screen>
+  );
+}
+```
+
+**Pattern Requirements**:
+- ✅ SafeAreaProvider configured in root layout
+- ✅ SafeAreaView used in all screens 
+- ✅ Reusable Screen component available for consistency
+- ✅ Safe area handling for auth screens, modal screens, and main app screens
+
+**Examples**:
+- Auth screen: Wraps KeyboardAvoidingView with SafeAreaView
+- Not-found screen: Uses SafeAreaView directly
+- Tab screens: Use ParallaxScrollView (handles safe areas internally) or SafeAreaView
+- Custom screens: Use Screen component for consistency
+
+### 2. Composition Pattern
 
 **Usage**: Building complex UI components from smaller, reusable pieces
 
@@ -65,7 +117,7 @@ App Root (_layout.tsx)
 - Easy to test individual pieces
 - Flexible layout arrangements
 
-### 2. Container/Presenter Pattern
+### 3. Container/Presenter Pattern
 
 **Usage**: Separating data logic from presentation logic
 
@@ -83,7 +135,7 @@ const RestaurantListPresenter = ({ restaurants, loading }) => {
 };
 ```
 
-### 3. Custom Hook Pattern
+### 4. Custom Hook Pattern
 
 **Usage**: Encapsulating reusable business logic
 
@@ -109,7 +161,7 @@ const useRestaurants = filters => {
 };
 ```
 
-### 4. Provider Pattern
+### 5. Provider Pattern
 
 **Usage**: Sharing global state and context
 
