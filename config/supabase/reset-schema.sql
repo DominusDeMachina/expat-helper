@@ -1,7 +1,23 @@
--- Expat Food Finder Database Schema
--- Focus: Supermarket product discovery for expats
--- This schema supports finding food products in supermarkets that taste like home
+-- Reset Expat Food Database Schema
+-- This script drops all existing tables and recreates them fresh
+-- Use this when you need to reset your database or fix schema issues
 
+-- Drop all tables in the correct order (respecting foreign key constraints)
+DROP TABLE IF EXISTS helpful_votes CASCADE;
+DROP TABLE IF EXISTS list_items CASCADE;
+DROP TABLE IF EXISTS user_lists CASCADE;
+DROP TABLE IF EXISTS product_ratings CASCADE;
+DROP TABLE IF EXISTS product_availability CASCADE;
+DROP TABLE IF EXISTS products CASCADE;
+DROP TABLE IF EXISTS supermarkets CASCADE;
+DROP TABLE IF EXISTS profiles CASCADE;
+
+-- Drop functions
+DROP FUNCTION IF EXISTS update_product_rating() CASCADE;
+DROP FUNCTION IF EXISTS update_helpful_votes_count() CASCADE;
+DROP FUNCTION IF EXISTS update_updated_at_column() CASCADE;
+
+-- Now recreate everything fresh
 -- Enable necessary extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -446,5 +462,5 @@ INSERT INTO products (name, brand, category, subcategory, description) VALUES
 ('Pasta Sauce', 'Barilla', 'condiments', 'pasta_sauce', 'Traditional Italian tomato pasta sauce'),
 ('Green Tea', 'Twinings', 'beverages', 'tea', 'Premium green tea blend');
 
--- Note: In a real application, you would populate these tables through the app interface
--- This sample data is just for testing the schema structure 
+-- Schema reset complete!
+-- You can now create user accounts and test the authentication system. 
