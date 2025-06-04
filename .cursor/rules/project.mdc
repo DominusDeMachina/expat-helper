@@ -10,6 +10,13 @@ This is a React Native app built with Expo that helps expatriates find authentic
 
 ## Core Principles
 
+### ⭐ Critical UI Requirements
+- **SafeAreaView MANDATORY**: All screens MUST use SafeAreaView to handle device safe areas (notches, status bars, home indicators)
+  - Root layout configured with SafeAreaProvider
+  - All individual screens wrapped with SafeAreaView from 'react-native-safe-area-context'
+  - Use the Screen component (`@/components/ui/Screen`) for consistency
+  - Never create screens without proper safe area handling
+
 ### Code Quality
 - **TypeScript First**: All new code must be written in TypeScript with proper type definitions
 - **Functional Components**: Use functional components with hooks, avoid class components
