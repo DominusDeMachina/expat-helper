@@ -53,3 +53,28 @@ When choosing components, ask:
 - Use Context7 to verify current best practices for Expo components
 - Leverage Context7 for troubleshooting Expo-specific issues
 - Reference Context7 for up-to-date API examples and patterns
+
+## **Styling Preferences**
+
+### **Line Height Policy**
+- **NEVER use `lineHeight` in styles without explicit user approval**
+- **Always ask before adding `lineHeight` properties**
+- **Rationale**: User preference for natural text spacing
+
+```typescript
+// ❌ DON'T: Add lineHeight without asking
+const styles = StyleSheet.create({
+  text: {
+    fontSize: 16,
+    lineHeight: 24, // Don't add this
+  },
+});
+
+// ✅ DO: Use natural line height (no property)
+const styles = StyleSheet.create({
+  text: {
+    fontSize: 16,
+    // Let React Native handle line height naturally
+  },
+});
+```

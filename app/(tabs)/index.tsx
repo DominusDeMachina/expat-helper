@@ -5,13 +5,20 @@
 
 import { Column, Container, Row } from '@/components/ui/Layout';
 import React, { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import {
+    Button,
+    Card,
+    IconButton,
+    Searchbar,
+    Surface,
+    Text,
+    TouchableRipple,
+    useTheme
+} from 'react-native-paper';
 
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 import { useAuth } from '@/contexts/AuthContext';
 import { useResponsive } from '@/hooks/useResponsive';
-import { useThemeColor } from '@/hooks/useThemeColor';
 import { Ionicons } from '@expo/vector-icons';
 
 interface Product {
@@ -34,11 +41,8 @@ interface Supermarket {
 
 export default function HomeScreen() {
   const { user, profile, signOut } = useAuth();
-  const { isUp, getResponsiveValue, spacing } = useResponsive();
-  const tintColor = useThemeColor({}, 'tint');
-  const backgroundColor = useThemeColor({}, 'background');
-  const textColor = useThemeColor({}, 'text');
-  const cardColor = useThemeColor({}, 'card');
+  const { isUp, getResponsiveValue } = useResponsive();
+  const theme = useTheme();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -51,13 +55,6 @@ export default function HomeScreen() {
   });
 
   const showSidebar = isUp('lg');
-  const productsPerRow = getResponsiveValue({
-    xs: 1,
-    sm: 2,
-    md: 2,
-    lg: 3,
-    xl: 4,
-  });
 
   const handleSignOut = async () => {
     Alert.alert(
@@ -183,7 +180,9 @@ export default function HomeScreen() {
         {Array(emptyStars).fill(0).map((_, i) => (
           <Ionicons key={`empty-${i}`} name="star-outline" size={16} color="#FFD700" />
         ))}
-        <ThemedText style={styles.ratingText}>({rating.toFixed(1)})</ThemedText>
+        <Text variant="bodySmall" style={[styles.ratingText, { color: theme.colors.onSurfaceVariant }]}>
+          ({rating.toFixed(1)})
+        </Text>
       </View>
     );
   };
@@ -195,27 +194,27 @@ export default function HomeScreen() {
   });
 
   return (
-    <ThemedView style={[styles.container, { backgroundColor }]}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       {/* Header */}
       <Container style={styles.header}>
         <Row align="center" justify="space-between">
           <Column auto>
             <View>
-              <ThemedText style={[styles.greeting, { color: textColor }]}>
+              <Text variant="bodyMedium" style={[styles.greeting, { color: theme.colors.onSurfaceVariant }]}>
                 Welcome back!
-              </ThemedText>
-              <ThemedText style={[styles.userName, { fontSize: headerSize, color: textColor }]}>
+              </Text>
+              <Text variant="headlineSmall" style={[styles.userName, { fontSize: headerSize, color: theme.colors.onBackground }]}>
                 {profile?.email || user?.email || 'Explorer'}
-              </ThemedText>
+              </Text>
             </View>
           </Column>
           <Column auto>
-            <TouchableOpacity
-              style={[styles.profileButton, { backgroundColor: cardColor }]}
+            <IconButton
+              icon="account-outline"
+              size={24}
+              mode="contained-tonal"
               onPress={handleSignOut}
-            >
-              <Ionicons name="person-outline" size={24} color={tintColor} />
-            </TouchableOpacity>
+            />
           </Column>
         </Row>
       </Container>
@@ -225,16 +224,13 @@ export default function HomeScreen() {
         <Container style={styles.searchSection}>
           <Row>
             <Column size={12}>
-              <View style={[styles.searchContainer, { backgroundColor: cardColor }]}>
-                <Ionicons name="search-outline" size={20} color={tintColor} style={styles.searchIcon} />
-                <TextInput
-                  style={[styles.searchInput, { color: textColor }]}
-                  placeholder="Search for products that taste like home..."
-                  placeholderTextColor={textColor + '80'}
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                />
-              </View>
+              <Searchbar
+                placeholder="Search for products that taste like home..."
+                onChangeText={setSearchQuery}
+                value={searchQuery}
+                style={styles.searchBar}
+                inputStyle={{ color: theme.colors.onSurface }}
+              />
             </Column>
           </Row>
         </Container>
@@ -243,36 +239,24 @@ export default function HomeScreen() {
         <Container style={styles.categoriesSection}>
           <Row>
             <Column size={12}>
-              <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
+              <Text variant="titleMedium" style={[styles.sectionTitle, { color: theme.colors.onBackground }]}>
                 Categories
-              </ThemedText>
+              </Text>
             </Column>
           </Row>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesScroll}>
             <Row noGutters style={styles.categoriesRow}>
               {categories.map((category) => (
                 <Column key={category.id} auto style={styles.categoryColumn}>
-                  <TouchableOpacity
-                    style={[
-                      styles.categoryCard,
-                      { backgroundColor: selectedCategory === category.id ? tintColor : cardColor }
-                    ]}
+                  <Button
+                    mode={selectedCategory === category.id ? "contained" : "outlined"}
                     onPress={() => setSelectedCategory(category.id)}
+                    contentStyle={styles.categoryButton}
+                    style={styles.categoryButtonStyle}
+                    icon={({ color }) => <Ionicons name={category.icon as any} size={20} color={color} />}
                   >
-                    <Ionicons
-                      name={category.icon as any}
-                      size={24}
-                      color={selectedCategory === category.id ? 'white' : tintColor}
-                    />
-                    <ThemedText
-                      style={[
-                        styles.categoryText,
-                        { color: selectedCategory === category.id ? 'white' : textColor }
-                      ]}
-                    >
-                      {category.name}
-                    </ThemedText>
-                  </TouchableOpacity>
+                    {category.name}
+                  </Button>
                 </Column>
               ))}
             </Row>
@@ -285,9 +269,9 @@ export default function HomeScreen() {
             <Column responsive={{ xs: 12, lg: showSidebar ? 8 : 12 }}>
               {/* Products Grid */}
               <View style={styles.productsSection}>
-                <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
+                <Text variant="titleMedium" style={[styles.sectionTitle, { color: theme.colors.onBackground }]}>
                   Recommended Products ({filteredProducts.length})
-                </ThemedText>
+                </Text>
                 <Row style={styles.productsGrid}>
                   {filteredProducts.map((product) => (
                     <Column
@@ -301,25 +285,29 @@ export default function HomeScreen() {
                       }}
                       style={styles.productColumn}
                     >
-                      <TouchableOpacity style={[styles.productCard, { backgroundColor: cardColor }]}>
-                        <View style={[styles.productImage, { backgroundColor: tintColor + '20' }]}>
-                          <Ionicons name="nutrition-outline" size={40} color={tintColor} />
-                        </View>
-                        <View style={styles.productInfo}>
-                          <ThemedText style={[styles.productName, { color: textColor }]} numberOfLines={2}>
-                            {product.name}
-                          </ThemedText>
-                          {getRatingStars(product.rating)}
-                          <View style={styles.productDetails}>
-                            <ThemedText style={[styles.productPrice, { color: tintColor }]}>
-                              {product.price}
-                            </ThemedText>
-                            <ThemedText style={[styles.productSupermarket, { color: textColor }]}>
-                              {product.supermarket}
-                            </ThemedText>
+                      <Card mode="elevated" style={styles.productCard}>
+                        <TouchableRipple onPress={() => {}}>
+                          <View>
+                            <Surface style={[styles.productImage, { backgroundColor: theme.colors.primaryContainer }]} elevation={0}>
+                              <Ionicons name="nutrition-outline" size={40} color={theme.colors.primary} />
+                            </Surface>
+                            <Card.Content style={styles.productInfo}>
+                              <Text variant="titleSmall" style={[styles.productName, { color: theme.colors.onSurface }]} numberOfLines={2}>
+                                {product.name}
+                              </Text>
+                              {getRatingStars(product.rating)}
+                              <View style={styles.productDetails}>
+                                <Text variant="titleMedium" style={[styles.productPrice, { color: theme.colors.primary }]}>
+                                  {product.price}
+                                </Text>
+                                <Text variant="bodySmall" style={[styles.productSupermarket, { color: theme.colors.onSurfaceVariant }]}>
+                                  {product.supermarket}
+                                </Text>
+                              </View>
+                            </Card.Content>
                           </View>
-                        </View>
-                      </TouchableOpacity>
+                        </TouchableRipple>
+                      </Card>
                     </Column>
                   ))}
                 </Row>
@@ -329,31 +317,36 @@ export default function HomeScreen() {
             {/* Sidebar - Nearby Supermarkets */}
             {showSidebar && (
               <Column responsive={{ lg: 4 }}>
-                <View style={[styles.sidebar, { backgroundColor: cardColor }]}>
-                  <ThemedText style={[styles.sidebarTitle, { color: textColor }]}>
-                    Nearby Supermarkets
-                  </ThemedText>
-                  {mockSupermarkets.map((supermarket) => (
-                    <TouchableOpacity
-                      key={supermarket.id}
-                      style={styles.supermarketCard}
-                    >
-                      <View style={styles.supermarketInfo}>
-                        <ThemedText style={[styles.supermarketName, { color: textColor }]}>
-                          {supermarket.name}
-                        </ThemedText>
-                        <ThemedText style={[styles.supermarketDistance, { color: textColor }]}>
-                          {supermarket.distance}
-                        </ThemedText>
-                        {getRatingStars(supermarket.rating)}
-                        <ThemedText style={[styles.supermarketProducts, { color: textColor }]}>
-                          {supermarket.productsCount} products
-                        </ThemedText>
-                      </View>
-                      <Ionicons name="chevron-forward" size={20} color={tintColor} />
-                    </TouchableOpacity>
-                  ))}
-                </View>
+                <Card mode="elevated" style={styles.sidebar}>
+                  <Card.Content>
+                    <Text variant="titleMedium" style={[styles.sidebarTitle, { color: theme.colors.onSurface }]}>
+                      Nearby Supermarkets
+                    </Text>
+                    {mockSupermarkets.map((supermarket) => (
+                      <TouchableRipple
+                        key={supermarket.id}
+                        style={styles.supermarketCard}
+                        onPress={() => {}}
+                      >
+                        <View style={styles.supermarketContent}>
+                          <View style={styles.supermarketInfo}>
+                            <Text variant="titleSmall" style={[styles.supermarketName, { color: theme.colors.onSurface }]}>
+                              {supermarket.name}
+                            </Text>
+                            <Text variant="bodySmall" style={[styles.supermarketDistance, { color: theme.colors.onSurfaceVariant }]}>
+                              {supermarket.distance}
+                            </Text>
+                            {getRatingStars(supermarket.rating)}
+                            <Text variant="bodySmall" style={[styles.supermarketProducts, { color: theme.colors.onSurfaceVariant }]}>
+                              {supermarket.productsCount} products
+                            </Text>
+                          </View>
+                          <Ionicons name="chevron-forward" size={20} color={theme.colors.primary} />
+                        </View>
+                      </TouchableRipple>
+                    ))}
+                  </Card.Content>
+                </Card>
               </Column>
             )}
           </Row>
@@ -363,48 +356,64 @@ export default function HomeScreen() {
         <Container style={styles.quickActionsSection}>
           <Row>
             <Column size={12}>
-              <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
+              <Text variant="titleMedium" style={[styles.sectionTitle, { color: theme.colors.onBackground }]}>
                 Quick Actions
-              </ThemedText>
+              </Text>
             </Column>
           </Row>
           <Row>
             <Column responsive={{ xs: 6, sm: 3 }}>
-              <TouchableOpacity style={[styles.actionCard, { backgroundColor: cardColor }]}>
-                <Ionicons name="add-circle-outline" size={32} color={tintColor} />
-                <ThemedText style={[styles.actionText, { color: textColor }]}>
-                  Add Product
-                </ThemedText>
-              </TouchableOpacity>
+              <Card mode="outlined" style={styles.actionCard}>
+                <TouchableRipple onPress={() => {}}>
+                  <Card.Content style={styles.actionCardContent}>
+                    <Ionicons name="add-circle-outline" size={32} color={theme.colors.primary} />
+                    <Text variant="bodyMedium" style={[styles.actionText, { color: theme.colors.onSurface }]}>
+                      Add Product
+                    </Text>
+                  </Card.Content>
+                </TouchableRipple>
+              </Card>
             </Column>
             <Column responsive={{ xs: 6, sm: 3 }}>
-              <TouchableOpacity style={[styles.actionCard, { backgroundColor: cardColor }]}>
-                <Ionicons name="location-outline" size={32} color={tintColor} />
-                <ThemedText style={[styles.actionText, { color: textColor }]}>
-                  Find Stores
-                </ThemedText>
-              </TouchableOpacity>
+              <Card mode="outlined" style={styles.actionCard}>
+                <TouchableRipple onPress={() => {}}>
+                  <Card.Content style={styles.actionCardContent}>
+                    <Ionicons name="location-outline" size={32} color={theme.colors.primary} />
+                    <Text variant="bodyMedium" style={[styles.actionText, { color: theme.colors.onSurface }]}>
+                      Find Stores
+                    </Text>
+                  </Card.Content>
+                </TouchableRipple>
+              </Card>
             </Column>
             <Column responsive={{ xs: 6, sm: 3 }}>
-              <TouchableOpacity style={[styles.actionCard, { backgroundColor: cardColor }]}>
-                <Ionicons name="star-outline" size={32} color={tintColor} />
-                <ThemedText style={[styles.actionText, { color: textColor }]}>
-                  Rate Product
-                </ThemedText>
-              </TouchableOpacity>
+              <Card mode="outlined" style={styles.actionCard}>
+                <TouchableRipple onPress={() => {}}>
+                  <Card.Content style={styles.actionCardContent}>
+                    <Ionicons name="star-outline" size={32} color={theme.colors.primary} />
+                    <Text variant="bodyMedium" style={[styles.actionText, { color: theme.colors.onSurface }]}>
+                      Rate Product
+                    </Text>
+                  </Card.Content>
+                </TouchableRipple>
+              </Card>
             </Column>
             <Column responsive={{ xs: 6, sm: 3 }}>
-              <TouchableOpacity style={[styles.actionCard, { backgroundColor: cardColor }]}>
-                <Ionicons name="people-outline" size={32} color={tintColor} />
-                <ThemedText style={[styles.actionText, { color: textColor }]}>
-                  Community
-                </ThemedText>
-              </TouchableOpacity>
+              <Card mode="outlined" style={styles.actionCard}>
+                <TouchableRipple onPress={() => {}}>
+                  <Card.Content style={styles.actionCardContent}>
+                    <Ionicons name="people-outline" size={32} color={theme.colors.primary} />
+                    <Text variant="bodyMedium" style={[styles.actionText, { color: theme.colors.onSurface }]}>
+                      Community
+                    </Text>
+                  </Card.Content>
+                </TouchableRipple>
+              </Card>
             </Column>
           </Row>
         </Container>
       </ScrollView>
-    </ThemedView>
+    </View>
   );
 }
 
@@ -420,52 +429,21 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   greeting: {
-    fontSize: 16,
-    opacity: 0.7,
     marginBottom: 4,
   },
   userName: {
     fontWeight: 'bold',
   },
-  profileButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-  },
   searchSection: {
     paddingVertical: 20,
   },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 12,
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  searchIcon: {
-    marginRight: 12,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
+  searchBar: {
+    elevation: 2,
   },
   categoriesSection: {
     paddingBottom: 20,
   },
   sectionTitle: {
-    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 16,
   },
@@ -478,22 +456,11 @@ const styles = StyleSheet.create({
   categoryColumn: {
     marginRight: 12,
   },
-  categoryCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 20,
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+  categoryButton: {
+    paddingHorizontal: 8,
   },
-  categoryText: {
-    marginLeft: 8,
-    fontSize: 14,
-    fontWeight: '500',
+  categoryButtonStyle: {
+    borderRadius: 20,
   },
   productsSection: {
     marginBottom: 30,
@@ -505,26 +472,20 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   productCard: {
-    borderRadius: 12,
-    padding: 16,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
+    overflow: 'hidden',
   },
   productImage: {
     height: 120,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+    margin: 16,
+    marginBottom: 8,
   },
   productInfo: {
-    flex: 1,
+    paddingTop: 0,
   },
   productName: {
-    fontSize: 16,
     fontWeight: '600',
     marginBottom: 8,
   },
@@ -535,8 +496,6 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     marginLeft: 6,
-    fontSize: 12,
-    opacity: 0.7,
   },
   productDetails: {
     flexDirection: 'row',
@@ -544,69 +503,53 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   productPrice: {
-    fontSize: 16,
     fontWeight: 'bold',
   },
   productSupermarket: {
     fontSize: 12,
-    opacity: 0.7,
   },
   sidebar: {
-    padding: 20,
-    borderRadius: 12,
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    marginLeft: 16,
   },
   sidebarTitle: {
-    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 16,
   },
   supermarketCard: {
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  supermarketContent: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    paddingHorizontal: 8,
   },
   supermarketInfo: {
     flex: 1,
   },
   supermarketName: {
-    fontSize: 16,
     fontWeight: '600',
     marginBottom: 4,
   },
   supermarketDistance: {
-    fontSize: 12,
-    opacity: 0.7,
     marginBottom: 4,
   },
   supermarketProducts: {
-    fontSize: 12,
-    opacity: 0.7,
     marginTop: 4,
   },
   quickActionsSection: {
     paddingBottom: 100,
   },
   actionCard: {
-    alignItems: 'center',
-    padding: 20,
-    borderRadius: 12,
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
     marginBottom: 16,
+  },
+  actionCardContent: {
+    alignItems: 'center',
+    paddingVertical: 8,
   },
   actionText: {
     marginTop: 8,
-    fontSize: 14,
     fontWeight: '500',
     textAlign: 'center',
   },
