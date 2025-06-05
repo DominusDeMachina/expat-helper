@@ -89,11 +89,10 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 ### 6.1 Configure Auth Providers
 
 1. In Supabase dashboard, go to "Authentication" → "Providers"
-2. Configure providers you want:
-   - **Email**: Already enabled
-   - **Google**: Add OAuth credentials
-   - **Apple**: Add OAuth credentials (for iOS)
-   - **Facebook**: Add OAuth credentials (optional)
+2. **Email**: Already enabled by default
+3. **OAuth Providers**: For detailed setup instructions for Google, Facebook, and Microsoft OAuth, see `OAUTH_PROVIDERS_SETUP.md`
+
+> 📋 **Important**: OAuth providers require additional setup in their respective developer consoles. The client-side OAuth code is already implemented in the app, but you need to configure the providers in Supabase dashboard and set up OAuth apps with Google, Facebook, and Microsoft.
 
 ### 6.2 Configure Auth Settings
 
