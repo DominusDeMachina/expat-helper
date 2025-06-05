@@ -1,21 +1,13 @@
-import {
-    ActivityIndicator,
-    StyleSheet,
-    Text,
-    TextStyle,
-    TouchableOpacity,
-    TouchableOpacityProps,
-    View,
-    ViewStyle,
-} from 'react-native';
+import { TextStyle, ViewStyle } from 'react-native';
+import { Button as PaperButton, TouchableRipple } from 'react-native-paper';
 
-import { useThemeColor } from '@/hooks/useThemeColor';
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'text' | 'destructive';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
-export interface ButtonProps extends Omit<TouchableOpacityProps, 'style'> {
+export interface ButtonProps {
   /** Button text content */
   title: string;
   /** Visual variant of the button */
@@ -30,8 +22,8 @@ export interface ButtonProps extends Omit<TouchableOpacityProps, 'style'> {
   fullWidth?: boolean;
   /** Icon to display before the text */
   leftIcon?: React.ReactNode;
-  /** Icon to display after the text */
-  rightIcon?: React.ReactNode;
+  /** Right icon name from Ionicons */
+  rightIconName?: keyof typeof Ionicons.glyphMap;
   /** Custom container style */
   style?: ViewStyle;
   /** Custom text style */
@@ -39,6 +31,10 @@ export interface ButtonProps extends Omit<TouchableOpacityProps, 'style'> {
   /** Custom colors for light/dark themes */
   lightColor?: string;
   darkColor?: string;
+  /** OnPress handler */
+  onPress?: () => void;
+  /** Test ID for testing */
+  testID?: string;
 }
 
 export function Button({
@@ -49,197 +45,129 @@ export function Button({
   disabled = false,
   fullWidth = false,
   leftIcon,
-  rightIcon,
+  rightIconName,
   style,
   textStyle,
-  lightColor,
-  darkColor,
-  ...touchableProps
+  onPress,
+  testID,
+  ...props
 }: ButtonProps) {
-  const backgroundColor = useThemeColor(
-    { light: lightColor, dark: darkColor },
-    getBackgroundColorKey(variant)
-  );
-  
-  const textColor = useThemeColor(
-    {},
-    getTextColorKey(variant)
-  );
-
   const isDisabled = disabled || loading;
-  const buttonStyle = getButtonStyle(variant, size, fullWidth, backgroundColor, isDisabled);
-  const buttonTextStyle = getTextStyle(variant, size, textColor);
 
-  return (
-    <TouchableOpacity
-      {...touchableProps}
-      style={[buttonStyle, style]}
-      disabled={isDisabled}
-      accessibilityRole="button"
-      accessibilityState={{
-        disabled: isDisabled,
-        busy: loading,
-      }}
-      accessibilityLabel={title}
-    >
-      <View style={styles.content}>
-        {leftIcon && !loading && (
-          <View style={[styles.icon, styles.leftIcon]}>
-            {leftIcon}
-          </View>
-        )}
-        
-        {loading && (
-          <View style={[styles.icon, styles.leftIcon]}>
-            <ActivityIndicator
-              size="small"
-              color={textColor}
-            />
-          </View>
-        )}
-        
-        <Text style={[buttonTextStyle, textStyle]}>
-          {title}
-        </Text>
-        
-        {rightIcon && !loading && (
-          <View style={[styles.icon, styles.rightIcon]}>
-            {rightIcon}
-          </View>
-        )}
-      </View>
-    </TouchableOpacity>
-  );
-}
-
-// Helper functions
-function getBackgroundColorKey(variant: ButtonVariant): keyof typeof import('@/constants/Colors').Colors.light {
-  switch (variant) {
-    case 'primary':
-      return 'tint';
-    case 'secondary':
-      return 'card';
-    case 'destructive':
-      return 'notification';
-    case 'text':
-      return 'background';
-    default:
-      return 'tint';
-  }
-}
-
-function getTextColorKey(variant: ButtonVariant): keyof typeof import('@/constants/Colors').Colors.light {
-  switch (variant) {
-    case 'primary':
-      return 'background';
-    case 'secondary':
-      return 'text';
-    case 'destructive':
-      return 'background';
-    case 'text':
-      return 'tint';
-    default:
-      return 'background';
-  }
-}
-
-function getButtonStyle(
-  variant: ButtonVariant,
-  size: ButtonSize,
-  fullWidth: boolean,
-  backgroundColor: string,
-  disabled: boolean
-): ViewStyle {
-  const baseStyle: ViewStyle = {
-    backgroundColor,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    opacity: disabled ? 0.6 : 1,
+  // Map variants to Paper Button modes
+  const getPaperMode = (variant: ButtonVariant) => {
+    switch (variant) {
+      case 'primary':
+        return 'contained';
+      case 'secondary':
+        return 'outlined';
+      case 'text':
+        return 'text';
+      case 'destructive':
+        return 'contained';
+      default:
+        return 'contained';
+    }
   };
 
-  // Add border for secondary variant
-  if (variant === 'secondary') {
-    baseStyle.borderWidth = 1;
-    baseStyle.borderColor = backgroundColor;
+  // Get button content height based on size
+  const getButtonHeight = (size: ButtonSize) => {
+    switch (size) {
+      case 'sm':
+        return 36;
+      case 'md':
+        return 44;
+      case 'lg':
+        return 52;
+      default:
+        return 44;
+    }
+  };
+
+  // Get font size based on size
+  const getFontSize = (size: ButtonSize) => {
+    switch (size) {
+      case 'sm':
+        return 14;
+      case 'md':
+        return 16;
+      case 'lg':
+        return 18;
+      default:
+        return 16;
+    }
+  };
+
+  const buttonStyle: ViewStyle = {
+    height: getButtonHeight(size),
+    justifyContent: 'center',
+    ...(fullWidth && { width: '100%' }),
+    ...style,
+  };
+
+  const buttonTextStyle: TextStyle = {
+    fontSize: getFontSize(size),
+    ...textStyle,
+  };
+
+  // For destructive variant, we need custom styling
+  if (variant === 'destructive') {
+    return (
+      <PaperButton
+        mode="contained"
+        onPress={onPress}
+        disabled={isDisabled}
+        loading={loading}
+        style={buttonStyle}
+        labelStyle={buttonTextStyle}
+        buttonColor="#dc3545"
+        textColor="#ffffff"
+        icon={leftIcon ? () => leftIcon : undefined}
+        testID={testID}
+        {...props}
+      >
+        {title}
+      </PaperButton>
+    );
   }
 
-  // Size-specific styles
-  switch (size) {
-    case 'sm':
-      baseStyle.paddingHorizontal = 12;
-      baseStyle.paddingVertical = 8;
-      baseStyle.minHeight = 36;
-      break;
-    case 'md':
-      baseStyle.paddingHorizontal = 16;
-      baseStyle.paddingVertical = 12;
-      baseStyle.minHeight = 44;
-      break;
-    case 'lg':
-      baseStyle.paddingHorizontal = 20;
-      baseStyle.paddingVertical = 16;
-      baseStyle.minHeight = 52;
-      break;
-  }
-
-  // Full width
-  if (fullWidth) {
-    baseStyle.width = '100%';
-  }
-
-  // Text variant has no background
+  // For text variant with custom styling
   if (variant === 'text') {
-    baseStyle.backgroundColor = 'transparent';
+    return (
+      <TouchableRipple
+        onPress={onPress}
+        disabled={isDisabled}
+        style={[buttonStyle, { backgroundColor: 'transparent' }]}
+        testID={testID}
+      >
+        <PaperButton
+          mode="text"
+          loading={loading}
+          disabled={isDisabled}
+          labelStyle={buttonTextStyle}
+          icon={leftIcon ? () => leftIcon : undefined}
+          contentStyle={{ height: '100%' }}
+        >
+          {title}
+        </PaperButton>
+      </TouchableRipple>
+    );
   }
 
-  return baseStyle;
-}
-
-function getTextStyle(
-  variant: ButtonVariant,
-  size: ButtonSize,
-  textColor: string
-): TextStyle {
-  const baseStyle: TextStyle = {
-    color: textColor,
-    fontWeight: '600',
-    textAlign: 'center',
-  };
-
-  // Size-specific text styles
-  switch (size) {
-    case 'sm':
-      baseStyle.fontSize = 14;
-      baseStyle.lineHeight = 20;
-      break;
-    case 'md':
-      baseStyle.fontSize = 16;
-      baseStyle.lineHeight = 24;
-      break;
-    case 'lg':
-      baseStyle.fontSize = 18;
-      baseStyle.lineHeight = 28;
-      break;
-  }
-
-  return baseStyle;
-}
-
-const styles = StyleSheet.create({
-  content: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  icon: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  leftIcon: {
-    marginRight: 8,
-  },
-  rightIcon: {
-    marginLeft: 8,
-  },
-}); 
+  // Standard Paper Button for primary and secondary variants
+  return (
+    <PaperButton
+      mode={getPaperMode(variant)}
+      onPress={onPress}
+      disabled={isDisabled}
+      loading={loading}
+      style={buttonStyle}
+      labelStyle={buttonTextStyle}
+      icon={leftIcon ? () => leftIcon : undefined}
+      testID={testID}
+      {...props}
+    >
+      {title}
+    </PaperButton>
+  );
+} 

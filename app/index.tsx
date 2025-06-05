@@ -6,13 +6,13 @@
 import { Column, Container, Row } from '@/components/ui/Layout';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { router } from 'expo-router';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import React from 'react';
 
 export default function LandingPage() {
   const { isUp, getResponsiveValue } = useResponsive();
@@ -46,6 +46,10 @@ export default function LandingPage() {
 
   const handleGetStarted = () => {
     router.push('/auth');
+  };
+
+  const handleViewComponents = () => {
+    router.push('/component-demo');
   };
 
   const features = [
@@ -98,16 +102,29 @@ export default function LandingPage() {
                   from your local grocery stores.
                 </ThemedText>
 
-                <TouchableOpacity
-                  style={[styles.ctaButton, { backgroundColor: tintColor }]}
-                  onPress={handleGetStarted}
-                  activeOpacity={0.8}
-                >
-                  <ThemedText style={styles.ctaButtonText}>
-                    Get Started
-                  </ThemedText>
-                  <Ionicons name="arrow-forward" size={20} color="white" />
-                </TouchableOpacity>
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    style={[styles.ctaButton, { backgroundColor: tintColor }]}
+                    onPress={handleGetStarted}
+                    activeOpacity={0.8}
+                  >
+                    <ThemedText style={styles.ctaButtonText}>
+                      Get Started
+                    </ThemedText>
+                    <Ionicons name="arrow-forward" size={20} color="white" />
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity
+                    style={[styles.secondaryButton, { borderColor: tintColor }]}
+                    onPress={handleViewComponents}
+                    activeOpacity={0.8}
+                  >
+                    <ThemedText style={[styles.secondaryButtonText, { color: tintColor }]}>
+                      View UI Components
+                    </ThemedText>
+                    <Ionicons name="eye-outline" size={20} color={tintColor} />
+                  </TouchableOpacity>
+                </View>
               </View>
             </Column>
 
@@ -284,6 +301,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  buttonContainer: {
+    gap: 12,
+  },
   ctaButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -300,6 +320,21 @@ const styles = StyleSheet.create({
   },
   ctaButtonText: {
     color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  secondaryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    borderRadius: 25,
+    borderWidth: 2,
+    gap: 8,
+    backgroundColor: 'transparent',
+  },
+  secondaryButtonText: {
     fontSize: 16,
     fontWeight: '600',
   },

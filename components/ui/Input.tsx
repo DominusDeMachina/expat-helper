@@ -1,294 +1,222 @@
 import React, { forwardRef, useState } from 'react';
-import {
-    StyleSheet,
-    Text,
-    TextInput,
-    TextInputProps,
-    TextStyle,
-    TouchableOpacity,
-    View,
-    ViewStyle,
-} from 'react-native';
-
-import { useThemeColor } from '@/hooks/useThemeColor';
+import { TextStyle, View, ViewStyle } from 'react-native';
+import { HelperText, TextInput as PaperTextInput } from 'react-native-paper';
 
 export type InputVariant = 'default' | 'outlined' | 'filled';
-export type InputSize = 'sm' | 'md' | 'lg';
+export type InputType = 'text' | 'number' | 'password' | 'email';
 export type InputState = 'default' | 'success' | 'error' | 'disabled';
 
-export interface InputProps extends Omit<TextInputProps, 'style'> {
+export interface InputProps {
+  /** Input value */
+  value?: string;
+  /** Placeholder text */
+  placeholder?: string;
   /** Input label */
   label?: string;
-  /** Helper text below the input */
-  helperText?: string;
-  /** Error message to display */
-  errorMessage?: string;
-  /** Visual variant of the input */
+  /** Input type */
+  type?: InputType;
+  /** Visual variant */
   variant?: InputVariant;
-  /** Size of the input */
-  size?: InputSize;
-  /** Current state of the input */
+  /** Input state */
   state?: InputState;
-  /** Whether the input is required */
+  /** Whether input is required */
   required?: boolean;
-  /** Icon to display on the left side */
+  /** Whether input is disabled */
+  disabled?: boolean;
+  /** Whether input is multiline */
+  multiline?: boolean;
+  /** Number of lines for multiline input */
+  numberOfLines?: number;
+  /** Left icon component */
   leftIcon?: React.ReactNode;
-  /** Icon to display on the right side */
+  /** Right icon component */
   rightIcon?: React.ReactNode;
-  /** Whether to show a toggle button for password visibility */
-  showPasswordToggle?: boolean;
+  /** Helper text */
+  helperText?: string;
+  /** Error message */
+  errorMessage?: string;
+  /** Success message */
+  successMessage?: string;
   /** Custom container style */
   containerStyle?: ViewStyle;
   /** Custom input style */
-  inputStyle?: ViewStyle;
+  style?: ViewStyle;
   /** Custom text style */
   textStyle?: TextStyle;
-  /** Custom colors for light/dark themes */
-  lightColor?: string;
-  darkColor?: string;
+  /** OnChange handler */
+  onChangeText?: (text: string) => void;
+  /** OnFocus handler */
+  onFocus?: () => void;
+  /** OnBlur handler */
+  onBlur?: () => void;
+  /** Test ID for testing */
+  testID?: string;
 }
 
-export const Input = forwardRef<TextInput, InputProps>(({
-  label,
-  helperText,
-  errorMessage,
-  variant = 'outlined',
-  size = 'md',
-  state = 'default',
-  required = false,
-  leftIcon,
-  rightIcon,
-  showPasswordToggle = false,
-  containerStyle,
-  inputStyle,
-  textStyle,
-  lightColor,
-  darkColor,
-  secureTextEntry,
-  ...textInputProps
-}, ref) => {
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+export const Input = forwardRef<any, InputProps>(function Input(props, ref) {
+  const {
+    value,
+    placeholder,
+    label,
+    type = 'text',
+    variant = 'outlined',
+    state = 'default',
+    required = false,
+    disabled = false,
+    multiline = false,
+    numberOfLines,
+    leftIcon,
+    rightIcon,
+    helperText,
+    errorMessage,
+    successMessage,
+    containerStyle,
+    style,
+    textStyle,
+    onChangeText,
+    onFocus,
+    onBlur,
+    testID,
+    ...restProps
+  } = props;
+  const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
-  // Get all theme colors at the top level
-  const textColor = useThemeColor(
-    { light: lightColor, dark: darkColor },
-    'text'
-  );
-  
-  const backgroundColor = useThemeColor({}, 'background');
-  const defaultBorderColor = useThemeColor({}, 'border');
-  const focusedBorderColor = useThemeColor({}, 'tint');
-  const errorBorderColor = useThemeColor({}, 'notification');
-  const placeholderColor = useThemeColor({}, 'icon');
-  const errorTextColor = useThemeColor({}, 'notification');
-
-  const isDisabled = state === 'disabled';
+  const isDisabled = disabled || state === 'disabled';
   const hasError = state === 'error' || !!errorMessage;
-  const isPassword = secureTextEntry || showPasswordToggle;
-  const showPassword = isPassword && !isPasswordVisible;
+  const hasSuccess = state === 'success' || !!successMessage;
 
-  // Determine border color based on state and focus
-  const borderColor = getBorderColor(state, isFocused, defaultBorderColor, focusedBorderColor, errorBorderColor);
-  
-  const containerStyles = getContainerStyle(variant, size, borderColor, backgroundColor);
-  const inputStyles = getInputStyle(size, textColor);
-
-  const handlePasswordToggle = () => {
-    setIsPasswordVisible(!isPasswordVisible);
+  // Get Paper TextInput mode based on variant
+  const getPaperMode = (variant: InputVariant) => {
+    switch (variant) {
+      case 'outlined':
+        return 'outlined';
+      case 'filled':
+        return 'flat';
+      case 'default':
+        return 'outlined';
+      default:
+        return 'outlined';
+    }
   };
 
-  return (
-    <View style={[styles.wrapper, containerStyle]}>
-      {label && (
-        <Text style={[styles.label, { color: textColor }]}>
-          {label}
-          {required && <Text style={styles.required}> *</Text>}
-        </Text>
-      )}
-      
-      <View style={[containerStyles, inputStyle]}>
-        {leftIcon && (
-          <View style={styles.leftIcon}>
-            {leftIcon}
-          </View>
-        )}
-        
-        <TextInput
-          ref={ref}
-          {...textInputProps}
-          style={[inputStyles, textStyle]}
-          secureTextEntry={showPassword}
-          placeholderTextColor={placeholderColor}
-          editable={!isDisabled}
-          onFocus={(e) => {
-            setIsFocused(true);
-            textInputProps.onFocus?.(e);
-          }}
-          onBlur={(e) => {
-            setIsFocused(false);
-            textInputProps.onBlur?.(e);
-          }}
-          accessibilityLabel={label}
-          accessibilityHint={helperText}
-          accessibilityState={{
-            disabled: isDisabled,
-          }}
+  // Get keyboard type based on input type
+  const getKeyboardType = (type: InputType) => {
+    switch (type) {
+      case 'email':
+        return 'email-address';
+      case 'number':
+        return 'numeric';
+      case 'text':
+      case 'password':
+      default:
+        return 'default';
+    }
+  };
+
+  // Get secure text entry
+  const getSecureTextEntry = () => {
+    return type === 'password' && !showPassword;
+  };
+
+  // Handle focus
+  const handleFocus = () => {
+    setIsFocused(true);
+    onFocus?.();
+  };
+
+  // Handle blur
+  const handleBlur = () => {
+    setIsFocused(false);
+    onBlur?.();
+  };
+
+  // Toggle password visibility
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  // Build the right icon
+  const getRightIcon = () => {
+    if (type === 'password') {
+      return (
+        <PaperTextInput.Icon
+          icon={showPassword ? 'eye-off' : 'eye'}
+          onPress={togglePasswordVisibility}
+          forceTextInputFocus={false}
         />
-        
-        {(rightIcon || showPasswordToggle) && (
-          <View style={styles.rightIcon}>
-            {showPasswordToggle && isPassword ? (
-              <TouchableOpacity
-                onPress={handlePasswordToggle}
-                accessibilityRole="button"
-                accessibilityLabel={isPasswordVisible ? "Hide password" : "Show password"}
-              >
-                <Text style={[styles.passwordToggle, { color: textColor }]}>
-                  {isPasswordVisible ? '👁️' : '👁️‍🗨️'}
-                </Text>
-              </TouchableOpacity>
-            ) : (
-              rightIcon
-            )}
-          </View>
-        )}
-      </View>
-      
-      {(helperText || errorMessage) && (
-        <Text style={[
-          styles.helperText,
-          { color: hasError ? errorTextColor : placeholderColor }
-        ]}>
-          {errorMessage || helperText}
-        </Text>
+      );
+    }
+    if (rightIcon) {
+      return <PaperTextInput.Icon icon={() => rightIcon} />;
+    }
+    return undefined;
+  };
+
+  // Get input colors based on state
+  const getInputColors = () => {
+    if (hasError) {
+      return {
+        error: true,
+        activeOutlineColor: '#dc3545',
+        outlineColor: '#dc3545',
+      };
+    }
+    if (hasSuccess) {
+      return {
+        activeOutlineColor: '#28a745',
+        outlineColor: isFocused ? '#28a745' : undefined,
+      };
+    }
+    return {};
+  };
+
+  // Get helper text with proper type and color
+  const getHelperText = () => {
+    if (errorMessage) {
+      return { text: errorMessage, type: 'error' as const };
+    }
+    if (successMessage) {
+      return { text: successMessage, type: 'info' as const };
+    }
+    if (helperText) {
+      return { text: helperText, type: 'info' as const };
+    }
+    return null;
+  };
+
+  const finalLabel = required && label ? `${label} *` : label;
+  const helper = getHelperText();
+
+  return (
+    <View style={containerStyle}>
+      <PaperTextInput
+        ref={ref}
+        label={finalLabel}
+        placeholder={placeholder}
+        value={value}
+        mode={getPaperMode(variant)}
+        disabled={isDisabled}
+        multiline={multiline}
+        numberOfLines={numberOfLines}
+        keyboardType={getKeyboardType(type)}
+        secureTextEntry={getSecureTextEntry()}
+        left={leftIcon ? <PaperTextInput.Icon icon={() => leftIcon} /> : undefined}
+        right={getRightIcon()}
+        onChangeText={onChangeText}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        style={style as any}
+        contentStyle={textStyle}
+        testID={testID}
+        {...getInputColors()}
+        {...restProps}
+      />
+      {helper && (
+        <HelperText type={helper.type} visible={!!helper.text}>
+          {helper.text}
+        </HelperText>
       )}
     </View>
   );
-});
-
-Input.displayName = 'Input';
-
-// Helper functions
-function getBorderColor(
-  state: InputState,
-  isFocused: boolean,
-  defaultColor: string,
-  focusedColor: string,
-  errorColor: string
-): string {
-  if (state === 'error') return errorColor;
-  if (isFocused) return focusedColor;
-  return defaultColor;
-}
-
-function getContainerStyle(
-  variant: InputVariant,
-  size: InputSize,
-  borderColor: string,
-  backgroundColor: string
-): ViewStyle {
-  const baseStyle: ViewStyle = {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 8,
-  };
-
-  // Variant-specific styles
-  switch (variant) {
-    case 'outlined':
-      baseStyle.borderWidth = 1;
-      baseStyle.borderColor = borderColor;
-      baseStyle.backgroundColor = 'transparent';
-      break;
-    case 'filled':
-      baseStyle.backgroundColor = backgroundColor;
-      baseStyle.borderWidth = 0;
-      break;
-    case 'default':
-      baseStyle.borderBottomWidth = 1;
-      baseStyle.borderBottomColor = borderColor;
-      baseStyle.backgroundColor = 'transparent';
-      break;
-  }
-
-  // Size-specific styles
-  switch (size) {
-    case 'sm':
-      baseStyle.paddingHorizontal = 12;
-      baseStyle.paddingVertical = 8;
-      baseStyle.minHeight = 36;
-      break;
-    case 'md':
-      baseStyle.paddingHorizontal = 16;
-      baseStyle.paddingVertical = 12;
-      baseStyle.minHeight = 44;
-      break;
-    case 'lg':
-      baseStyle.paddingHorizontal = 20;
-      baseStyle.paddingVertical = 16;
-      baseStyle.minHeight = 52;
-      break;
-  }
-
-  return baseStyle;
-}
-
-function getInputStyle(size: InputSize, textColor: string): TextStyle {
-  const baseStyle: TextStyle = {
-    flex: 1,
-    color: textColor,
-    fontWeight: '400',
-  };
-
-  // Size-specific text styles
-  switch (size) {
-    case 'sm':
-      baseStyle.fontSize = 14;
-      baseStyle.lineHeight = 20;
-      break;
-    case 'md':
-      baseStyle.fontSize = 16;
-      baseStyle.lineHeight = 24;
-      break;
-    case 'lg':
-      baseStyle.fontSize = 18;
-      baseStyle.lineHeight = 28;
-      break;
-  }
-
-  return baseStyle;
-}
-
-const styles = StyleSheet.create({
-  wrapper: {
-    marginBottom: 4,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 6,
-  },
-  required: {
-    color: '#ef4444',
-  },
-  leftIcon: {
-    marginRight: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  rightIcon: {
-    marginLeft: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  passwordToggle: {
-    fontSize: 16,
-    padding: 4,
-  },
-  helperText: {
-    fontSize: 12,
-    marginTop: 4,
-    lineHeight: 16,
-  },
 }); 

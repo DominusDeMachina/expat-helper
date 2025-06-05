@@ -6,9 +6,10 @@ import {
     ViewStyle,
 } from 'react-native';
 
-import { useThemeColor } from '@/hooks/useThemeColor';
 import { Ionicons } from '@expo/vector-icons';
 import { Typography } from './Typography';
+import { useTheme } from 'react-native-paper';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 export type RatingSize = 'sm' | 'md' | 'lg';
 export type RatingVariant = 'star' | 'heart' | 'thumb';
@@ -63,13 +64,17 @@ export function Rating({
   darkColor,
 }: RatingProps) {
   const [hoverRating, setHoverRating] = useState<number | null>(null);
+  const paperTheme = useTheme();
   
-  const activeColor = useThemeColor(
+  const themeActiveColor = useThemeColor(
     { light: lightColor, dark: darkColor },
     'tint'
   );
-  const inactiveColor = useThemeColor({}, 'icon');
-  const textColor = useThemeColor({}, 'text');
+  const themeInactiveColor = useThemeColor({}, 'icon');
+  
+  // Use Paper theme colors as fallback
+  const activeColor = themeActiveColor || paperTheme.colors.primary;
+  const inactiveColor = themeInactiveColor || paperTheme.colors.onSurfaceVariant;
 
   const iconSize = getSizeValue(size);
   const isInteractive = interactive && !readOnly;
@@ -171,17 +176,27 @@ export function Rating({
     return (
       <View style={styles.valueContainer}>
         {label && (
-          <Typography variant="body2" color="muted" style={styles.label}>
+          <Typography 
+            variant="body2" 
+            style={[styles.label, { color: paperTheme.colors.onSurfaceVariant }]}
+          >
             {label}
           </Typography>
         )}
         {showValue && (
-          <Typography variant="body2" weight="medium" style={styles.value}>
+          <Typography 
+            variant="body2" 
+            weight="medium" 
+            style={[styles.value, { color: paperTheme.colors.onSurface }]}
+          >
             {rating.toFixed(allowHalf ? 1 : 0)}
           </Typography>
         )}
         {showCount && count !== undefined && (
-          <Typography variant="body2" color="muted">
+          <Typography 
+            variant="body2" 
+            style={{ color: paperTheme.colors.onSurfaceVariant }}
+          >
             ({count})
           </Typography>
         )}

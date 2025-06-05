@@ -1,6 +1,7 @@
 import { useThemeColor } from '@/hooks/useThemeColor';
 import React from 'react';
-import { Text, type TextProps, TextStyle } from 'react-native';
+import { type TextProps, TextStyle } from 'react-native';
+import { Text as PaperText } from 'react-native-paper';
 
 export type TypographyVariant = 
   | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
@@ -91,14 +92,17 @@ export function Typography({
     combinedStyle.letterSpacing = letterSpacing;
   }
 
+  // Map to Paper text variant for enhanced accessibility and theming
+  const paperVariant = getPaperVariant(variant);
+
   return (
-    <Text
+    <PaperText
       {...textProps}
+      variant={paperVariant}
       style={[combinedStyle, style]}
-      accessibilityRole="text"
     >
       {children}
-    </Text>
+    </PaperText>
   );
 }
 
@@ -123,6 +127,47 @@ function getColorKey(color: TypographyColor): keyof typeof import('@/constants/C
       return 'icon';
     default:
       return 'text';
+  }
+}
+
+function getPaperVariant(variant: TypographyVariant): 
+  | 'displayLarge' | 'displayMedium' | 'displaySmall'
+  | 'headlineLarge' | 'headlineMedium' | 'headlineSmall'
+  | 'titleLarge' | 'titleMedium' | 'titleSmall'
+  | 'labelLarge' | 'labelMedium' | 'labelSmall'
+  | 'bodyLarge' | 'bodyMedium' | 'bodySmall' {
+  
+  switch (variant) {
+    case 'h1':
+      return 'displayLarge';
+    case 'h2':
+      return 'displayMedium';
+    case 'h3':
+      return 'displaySmall';
+    case 'h4':
+      return 'headlineLarge';
+    case 'h5':
+      return 'headlineMedium';
+    case 'h6':
+      return 'headlineSmall';
+    case 'subtitle1':
+      return 'titleLarge';
+    case 'subtitle2':
+      return 'titleMedium';
+    case 'body1':
+      return 'bodyLarge';
+    case 'body2':
+      return 'bodyMedium';
+    case 'caption':
+      return 'bodySmall';
+    case 'overline':
+      return 'labelSmall';
+    case 'button':
+      return 'labelMedium';
+    case 'link':
+      return 'labelLarge';
+    default:
+      return 'bodyMedium';
   }
 }
 
@@ -204,11 +249,11 @@ function getVariantStyle(variant: TypographyVariant): TextStyle {
       };
     case 'button':
       return {
-        fontSize: 16,
-        lineHeight: 24,
-        fontWeight: '600',
+        fontSize: 14,
+        lineHeight: 20,
+        fontWeight: '500',
         textTransform: 'uppercase',
-        letterSpacing: 0.5,
+        letterSpacing: 1.25,
       };
     case 'link':
       return {
@@ -248,49 +293,55 @@ function getTransformStyle(
   lowercase: boolean,
   capitalize: boolean
 ): Partial<TextStyle> {
-  if (uppercase) return { textTransform: 'uppercase' };
-  if (lowercase) return { textTransform: 'lowercase' };
-  if (capitalize) return { textTransform: 'capitalize' };
+  if (uppercase) {
+    return { textTransform: 'uppercase' };
+  }
+  if (lowercase) {
+    return { textTransform: 'lowercase' };
+  }
+  if (capitalize) {
+    return { textTransform: 'capitalize' };
+  }
   return {};
 }
 
-// Predefined component variants for common use cases
+// Convenience components for common typography variants
 export const Heading1 = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography variant="h1" {...props} />
+  <Typography {...props} variant="h1" />
 );
 
 export const Heading2 = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography variant="h2" {...props} />
+  <Typography {...props} variant="h2" />
 );
 
 export const Heading3 = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography variant="h3" {...props} />
+  <Typography {...props} variant="h3" />
 );
 
 export const Heading4 = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography variant="h4" {...props} />
+  <Typography {...props} variant="h4" />
 );
 
 export const Heading5 = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography variant="h5" {...props} />
+  <Typography {...props} variant="h5" />
 );
 
 export const Heading6 = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography variant="h6" {...props} />
+  <Typography {...props} variant="h6" />
 );
 
 export const BodyText = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography variant="body1" {...props} />
+  <Typography {...props} variant="body1" />
 );
 
 export const SmallText = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography variant="body2" {...props} />
+  <Typography {...props} variant="body2" />
 );
 
 export const Caption = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography variant="caption" {...props} />
+  <Typography {...props} variant="caption" />
 );
 
 export const Link = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography variant="link" color="primary" {...props} />
+  <Typography {...props} variant="link" />
 ); 

@@ -1,15 +1,19 @@
-import React, { useEffect, useRef } from 'react';
 import {
-    ActivityIndicator,
     Animated,
     Easing,
     StyleSheet,
     View,
     ViewStyle
 } from 'react-native';
+import {
+    ActivityIndicator as PaperActivityIndicator,
+    ProgressBar as PaperProgressBar,
+    useTheme
+} from 'react-native-paper';
+import React, { useEffect, useRef } from 'react';
 
-import { useThemeColor } from '@/hooks/useThemeColor';
 import { Typography } from './Typography';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 export type LoadingVariant = 'spinner' | 'skeleton' | 'progress' | 'dots' | 'pulse';
 export type LoadingSize = 'sm' | 'md' | 'lg';
@@ -46,12 +50,14 @@ export function LoadingIndicator({
   darkColor,
 }: LoadingIndicatorProps) {
   const animatedValue = useRef(new Animated.Value(0)).current;
+  const paperTheme = useTheme();
   const themeColor = useThemeColor(
     { light: lightColor, dark: darkColor },
     'tint'
   );
   
-  const loadingColor = color || themeColor;
+  // Use Paper theme primary color as fallback
+  const loadingColor = color || themeColor || paperTheme.colors.primary;
   const sizeValue = getSizeValue(size);
 
   useEffect(() => {
@@ -81,8 +87,9 @@ export function LoadingIndicator({
     switch (variant) {
       case 'spinner':
         return (
-          <ActivityIndicator
-            size={size === 'sm' ? 'small' : 'large'}
+          <PaperActivityIndicator
+            size={getPaperSize(size)}
+            animating={true}
             color={loadingColor}
           />
         );
@@ -93,16 +100,22 @@ export function LoadingIndicator({
             width={sizeValue}
             height={sizeValue / 4}
             color={loadingColor}
+            theme={paperTheme}
           />
         );
 
       case 'progress':
         return (
-          <ProgressBar
-            progress={progress}
-            width={sizeValue}
-            height={sizeValue / 8}
+          <PaperProgressBar
+            progress={progress / 100}
             color={loadingColor}
+            style={[
+              styles.progressBar,
+              {
+                width: sizeValue,
+                height: sizeValue / 8,
+              }
+            ]}
           />
         );
 
@@ -126,8 +139,9 @@ export function LoadingIndicator({
 
       default:
         return (
-          <ActivityIndicator
-            size={size === 'sm' ? 'small' : 'large'}
+          <PaperActivityIndicator
+            size={getPaperSize(size)}
+            animating={true}
             color={loadingColor}
           />
         );
@@ -143,7 +157,7 @@ export function LoadingIndicator({
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      backgroundColor: paperTheme.colors.backdrop,
       zIndex: 1000,
     }),
   };
@@ -154,8 +168,10 @@ export function LoadingIndicator({
       {text && (
         <Typography
           variant="body2"
-          color="muted"
-          style={{ marginTop: 12 }}
+          style={[
+            styles.loadingText,
+            { color: paperTheme.colors.onSurfaceVariant }
+          ]}
         >
           {text}
         </Typography>
@@ -164,8 +180,31 @@ export function LoadingIndicator({
   );
 }
 
+// Helper function to map size to Paper size
+function getPaperSize(size: LoadingSize): 'small' | 'large' {
+  switch (size) {
+    case 'sm':
+      return 'small';
+    case 'md':
+    case 'lg':
+      return 'large';
+    default:
+      return 'large';
+  }
+}
+
 // Helper Components
-function SkeletonComponent({ width, height, color }: { width: number; height: number; color: string }) {
+function SkeletonComponent({ 
+  width, 
+  height, 
+  color, 
+  theme 
+}: { 
+  width: number; 
+  height: number; 
+  color: string;
+  theme: any;
+}) {
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -192,6 +231,9 @@ function SkeletonComponent({ width, height, color }: { width: number; height: nu
     outputRange: [0.3, 0.7],
   });
 
+  // Use theme colors for skeleton with fallback
+  const skeletonColor = color || theme.colors.surfaceVariant;
+
   return (
     <View style={styles.skeletonContainer}>
       <Animated.View
@@ -200,7 +242,7 @@ function SkeletonComponent({ width, height, color }: { width: number; height: nu
           {
             width,
             height,
-            backgroundColor: color,
+            backgroundColor: skeletonColor,
             opacity,
           },
         ]}
@@ -209,23 +251,11 @@ function SkeletonComponent({ width, height, color }: { width: number; height: nu
         style={[
           styles.skeletonBar,
           {
-            width: width * 0.7,
+            width: width * 0.6,
             height,
-            backgroundColor: color,
+            backgroundColor: skeletonColor,
+            marginTop: height / 2,
             opacity,
-            marginTop: 8,
-          },
-        ]}
-      />
-      <Animated.View
-        style={[
-          styles.skeletonBar,
-          {
-            width: width * 0.9,
-            height,
-            backgroundColor: color,
-            opacity,
-            marginTop: 8,
           },
         ]}
       />
@@ -233,99 +263,80 @@ function SkeletonComponent({ width, height, color }: { width: number; height: nu
   );
 }
 
-function ProgressBar({ progress, width, height, color }: { progress: number; width: number; height: number; color: string }) {
-  const backgroundColor = useThemeColor({}, 'border');
-  const progressWidth = (progress / 100) * width;
-
-  return (
-    <View style={[styles.progressContainer, { width, height, backgroundColor }]}>
-      <View
-        style={[
-          styles.progressBar,
-          {
-            width: progressWidth,
-            height,
-            backgroundColor: color,
-          },
-        ]}
-      />
-    </View>
-  );
-}
-
-function DotsComponent({ animatedValue, size, color }: { animatedValue: Animated.Value; size: number; color: string }) {
-  const scale1 = animatedValue.interpolate({
-    inputRange: [0, 0.2, 0.4, 1],
-    outputRange: [1, 1.5, 1, 1],
+function DotsComponent({ 
+  animatedValue, 
+  size, 
+  color 
+}: { 
+  animatedValue: Animated.Value; 
+  size: number; 
+  color: string;
+}) {
+  const dot1Opacity = animatedValue.interpolate({
+    inputRange: [0, 0.25, 0.5, 0.75, 1],
+    outputRange: [0.4, 1, 0.4, 0.4, 0.4],
   });
 
-  const scale2 = animatedValue.interpolate({
-    inputRange: [0, 0.2, 0.6, 1],
-    outputRange: [1, 1, 1.5, 1],
+  const dot2Opacity = animatedValue.interpolate({
+    inputRange: [0, 0.25, 0.5, 0.75, 1],
+    outputRange: [0.4, 0.4, 1, 0.4, 0.4],
   });
 
-  const scale3 = animatedValue.interpolate({
-    inputRange: [0, 0.4, 0.8, 1],
-    outputRange: [1, 1, 1, 1.5],
+  const dot3Opacity = animatedValue.interpolate({
+    inputRange: [0, 0.25, 0.5, 0.75, 1],
+    outputRange: [0.4, 0.4, 0.4, 1, 0.4],
   });
+
+  const dot4Opacity = animatedValue.interpolate({
+    inputRange: [0, 0.25, 0.5, 0.75, 1],
+    outputRange: [0.4, 0.4, 0.4, 0.4, 1],
+  });
+
+  const dotStyle = {
+    width: size,
+    height: size,
+    borderRadius: size / 2,
+    backgroundColor: color,
+    marginHorizontal: size / 4,
+  };
 
   return (
     <View style={styles.dotsContainer}>
-      <Animated.View
-        style={[
-          styles.dot,
-          {
-            width: size,
-            height: size,
-            backgroundColor: color,
-            transform: [{ scale: scale1 }],
-          },
-        ]}
-      />
-      <Animated.View
-        style={[
-          styles.dot,
-          {
-            width: size,
-            height: size,
-            backgroundColor: color,
-            transform: [{ scale: scale2 }],
-          },
-        ]}
-      />
-      <Animated.View
-        style={[
-          styles.dot,
-          {
-            width: size,
-            height: size,
-            backgroundColor: color,
-            transform: [{ scale: scale3 }],
-          },
-        ]}
-      />
+      <Animated.View style={[dotStyle, { opacity: dot1Opacity }]} />
+      <Animated.View style={[dotStyle, { opacity: dot2Opacity }]} />
+      <Animated.View style={[dotStyle, { opacity: dot3Opacity }]} />
+      <Animated.View style={[dotStyle, { opacity: dot4Opacity }]} />
     </View>
   );
 }
 
-function PulseComponent({ animatedValue, size, color }: { animatedValue: Animated.Value; size: number; color: string }) {
+function PulseComponent({ 
+  animatedValue, 
+  size, 
+  color 
+}: { 
+  animatedValue: Animated.Value; 
+  size: number; 
+  color: string;
+}) {
   const scale = animatedValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.8, 1.2],
+    inputRange: [0, 0.5, 1],
+    outputRange: [0.8, 1.2, 0.8],
   });
 
   const opacity = animatedValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.4, 1],
+    inputRange: [0, 0.5, 1],
+    outputRange: [0.5, 1, 0.5],
   });
 
   return (
     <Animated.View
       style={[
-        styles.pulseContainer,
+        styles.pulseCircle,
         {
           width: size,
           height: size,
+          borderRadius: size / 2,
           backgroundColor: color,
           transform: [{ scale }],
           opacity,
@@ -335,17 +346,16 @@ function PulseComponent({ animatedValue, size, color }: { animatedValue: Animate
   );
 }
 
-// Helper function
 function getSizeValue(size: LoadingSize): number {
   switch (size) {
     case 'sm':
-      return 80;
+      return 40;
     case 'md':
-      return 120;
+      return 80;
     case 'lg':
-      return 160;
-    default:
       return 120;
+    default:
+      return 80;
   }
 }
 
@@ -356,44 +366,40 @@ const styles = StyleSheet.create({
   skeletonBar: {
     borderRadius: 4,
   },
-  progressContainer: {
-    borderRadius: 4,
-    overflow: 'hidden',
-  },
-  progressBar: {
-    borderRadius: 4,
-  },
   dotsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  dot: {
-    borderRadius: 50,
-    marginHorizontal: 4,
+  pulseCircle: {
+    alignSelf: 'center',
   },
-  pulseContainer: {
-    borderRadius: 50,
+  progressBar: {
+    borderRadius: 4,
+  },
+  loadingText: {
+    marginTop: 12,
+    textAlign: 'center',
   },
 });
 
-// Predefined component variants for common use cases
+// Convenience components for common loading variants
 export const SpinnerLoader = (props: Omit<LoadingIndicatorProps, 'variant'>) => (
-  <LoadingIndicator variant="spinner" {...props} />
+  <LoadingIndicator {...props} variant="spinner" />
 );
 
 export const SkeletonLoader = (props: Omit<LoadingIndicatorProps, 'variant'>) => (
-  <LoadingIndicator variant="skeleton" {...props} />
+  <LoadingIndicator {...props} variant="skeleton" />
 );
 
 export const ProgressLoader = (props: Omit<LoadingIndicatorProps, 'variant'>) => (
-  <LoadingIndicator variant="progress" {...props} />
+  <LoadingIndicator {...props} variant="progress" />
 );
 
 export const DotsLoader = (props: Omit<LoadingIndicatorProps, 'variant'>) => (
-  <LoadingIndicator variant="dots" {...props} />
+  <LoadingIndicator {...props} variant="dots" />
 );
 
 export const PulseLoader = (props: Omit<LoadingIndicatorProps, 'variant'>) => (
-  <LoadingIndicator variant="pulse" {...props} />
+  <LoadingIndicator {...props} variant="pulse" />
 ); 

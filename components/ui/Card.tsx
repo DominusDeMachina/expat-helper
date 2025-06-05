@@ -1,16 +1,12 @@
 import {
-    Image,
-    ImageSourcePropType,
-    StyleSheet,
-    TouchableOpacity,
-    TouchableOpacityProps,
-    View,
-    ViewStyle,
+  ImageSourcePropType,
+  TouchableOpacityProps,
+  ViewStyle
 } from 'react-native';
+import { Card as PaperCard, useTheme } from 'react-native-paper';
 
-import { useThemeColor } from '@/hooks/useThemeColor';
 import React from 'react';
-import { Typography } from './Typography';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 export type CardVariant = 'elevated' | 'outlined' | 'filled';
 export type CardSize = 'sm' | 'md' | 'lg';
@@ -59,41 +55,44 @@ export function Card({
   darkColor,
   ...touchableProps
 }: CardProps) {
-  const backgroundColor = useThemeColor(
+  const paperTheme = useTheme();
+  const themeColor = useThemeColor(
     { light: lightColor, dark: darkColor },
     'card'
   );
   
-  const borderColor = useThemeColor({}, 'border');
-  const shadowColor = useThemeColor({}, 'text');
+  // Use Paper theme colors as fallback
+  const backgroundColor = themeColor || paperTheme.colors.surface;
+  const paddingValue = getPaddingValue(size);
+  const borderRadius = getBorderRadius(size);
 
-  const cardStyle = getCardStyle(variant, size, backgroundColor, borderColor, shadowColor);
-  const imageStyle = getImageStyle(imageHeight);
-  const paddingStyle = getPaddingStyle(size);
+  // Map variant to Paper card mode
+  const paperMode = getPaperMode(variant);
 
   const renderHeader = () => {
     if (header) {
       return (
-        <View style={[styles.header, paddingStyle.horizontal]}>
+        <PaperCard.Content style={{ paddingHorizontal: paddingValue }}>
           {header}
-        </View>
+        </PaperCard.Content>
       );
     }
     
     if (title || subtitle) {
       return (
-        <View style={[styles.header, paddingStyle.horizontal]}>
-          {title && (
-            <Typography variant="h6" weight="semibold">
-              {title}
-            </Typography>
-          )}
-          {subtitle && (
-            <Typography variant="body2" color="muted" style={styles.subtitle}>
-              {subtitle}
-            </Typography>
-          )}
-        </View>
+        <PaperCard.Title
+          title={title}
+          subtitle={subtitle}
+          titleStyle={{ 
+            fontWeight: '600',
+            color: paperTheme.colors.onSurface 
+          }}
+          subtitleStyle={{
+            color: paperTheme.colors.onSurfaceVariant
+          }}
+          titleNumberOfLines={2}
+          subtitleNumberOfLines={2}
+        />
       );
     }
     
@@ -104,9 +103,9 @@ export function Card({
     if (!children) return null;
     
     return (
-      <View style={[styles.content, paddingStyle.horizontal]}>
+      <PaperCard.Content style={{ paddingHorizontal: paddingValue }}>
         {children}
-      </View>
+      </PaperCard.Content>
     );
   };
 
@@ -114,135 +113,99 @@ export function Card({
     if (!footer) return null;
     
     return (
-      <View style={[styles.footer, paddingStyle.horizontal]}>
+      <PaperCard.Actions style={{ paddingHorizontal: paddingValue }}>
         {footer}
-      </View>
+      </PaperCard.Actions>
     );
   };
 
-  const CardComponent = pressable ? TouchableOpacity : View;
+  const cardProps = {
+    mode: paperMode,
+    style: [
+      {
+        backgroundColor,
+        borderRadius,
+        margin: 0,
+      },
+      style,
+    ],
+    ...(pressable && {
+      onPress: touchableProps.onPress,
+      onLongPress: touchableProps.onLongPress ? () => touchableProps.onLongPress!({} as any) : undefined,
+    }),
+  };
 
   return (
-    <CardComponent
-      {...(pressable ? touchableProps : {})}
-      style={[cardStyle, style]}
-      accessibilityRole={pressable ? 'button' : 'none'}
-    >
+    <PaperCard {...cardProps}>
       {image && (
-        <Image
+        <PaperCard.Cover
           source={image}
-          style={[styles.image, imageStyle]}
-          resizeMode="cover"
+          style={{
+            height: imageHeight || 200,
+            borderTopLeftRadius: borderRadius,
+            borderTopRightRadius: borderRadius,
+            borderBottomLeftRadius: 0,
+            borderBottomRightRadius: 0,
+          }}
         />
       )}
       
       {renderHeader()}
       {renderContent()}
       {renderFooter()}
-    </CardComponent>
+    </PaperCard>
   );
 }
 
 // Helper functions
-function getCardStyle(
-  variant: CardVariant,
-  size: CardSize,
-  backgroundColor: string,
-  borderColor: string,
-  shadowColor: string
-): ViewStyle {
-  const baseStyle: ViewStyle = {
-    backgroundColor,
-    borderRadius: getSizeValue(size, 'radius'),
-    overflow: 'hidden',
-  };
-
-  // Variant-specific styles
+function getPaperMode(variant: CardVariant): 'elevated' | 'outlined' | 'contained' {
   switch (variant) {
     case 'elevated':
-      baseStyle.shadowColor = shadowColor;
-      baseStyle.shadowOffset = { width: 0, height: 2 };
-      baseStyle.shadowOpacity = 0.1;
-      baseStyle.shadowRadius = 4;
-      baseStyle.elevation = 3;
-      break;
+      return 'elevated';
     case 'outlined':
-      baseStyle.borderWidth = 1;
-      baseStyle.borderColor = borderColor;
-      break;
+      return 'outlined';
     case 'filled':
-      // Just background color, no additional styling
-      break;
+      return 'contained';
+    default:
+      return 'elevated';
   }
-
-  return baseStyle;
 }
 
-function getImageStyle(imageHeight?: number): ViewStyle {
-  return {
-    height: imageHeight || 200,
-    width: '100%',
-  };
+function getPaddingValue(size: CardSize): number {
+  switch (size) {
+    case 'sm':
+      return 12;
+    case 'md':
+      return 16;
+    case 'lg':
+      return 20;
+    default:
+      return 16;
+  }
 }
 
-function getPaddingStyle(size: CardSize) {
-  const padding = getSizeValue(size, 'padding');
-  
-  return {
-    all: { padding },
-    horizontal: { paddingHorizontal: padding },
-    vertical: { paddingVertical: padding },
-  };
+function getBorderRadius(size: CardSize): number {
+  switch (size) {
+    case 'sm':
+      return 8;
+    case 'md':
+      return 12;
+    case 'lg':
+      return 16;
+    default:
+      return 12;
+  }
 }
 
-function getSizeValue(size: CardSize, type: 'padding' | 'radius'): number {
-  const values = {
-    padding: {
-      sm: 12,
-      md: 16,
-      lg: 20,
-    },
-    radius: {
-      sm: 6,
-      md: 8,
-      lg: 12,
-    },
-  };
-  
-  return values[type][size];
-}
-
-const styles = StyleSheet.create({
-  header: {
-    paddingTop: 16,
-    paddingBottom: 8,
-  },
-  subtitle: {
-    marginTop: 4,
-  },
-  content: {
-    paddingVertical: 8,
-  },
-  footer: {
-    paddingTop: 8,
-    paddingBottom: 16,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(0, 0, 0, 0.1)',
-  },
-  image: {
-    // Image styles handled dynamically
-  },
-});
-
-// Predefined component variants for common use cases
+// Convenience components for common card variants
 export const ProductCard = (props: Omit<CardProps, 'variant'>) => (
-  <Card variant="elevated" {...props} />
+  <Card {...props} variant="elevated" />
 );
 
 export const InfoCard = (props: Omit<CardProps, 'variant'>) => (
-  <Card variant="outlined" {...props} />
+  <Card {...props} variant="outlined" />
 );
 
 export const ActionCard = (props: Omit<CardProps, 'variant' | 'pressable'>) => (
-  <Card variant="elevated" pressable {...props} />
+  <Card {...props} variant="filled" pressable={true} />
 ); 

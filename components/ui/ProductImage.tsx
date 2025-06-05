@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
 import {
-    ActivityIndicator,
     Dimensions,
     Image,
     ImageSourcePropType,
@@ -12,10 +10,12 @@ import {
     View,
     ViewStyle
 } from 'react-native';
+import { ActivityIndicator as PaperActivityIndicator, Surface, useTheme } from 'react-native-paper';
+import React, { useState } from 'react';
 
-import { useThemeColor } from '@/hooks/useThemeColor';
 import { Ionicons } from '@expo/vector-icons';
 import { Typography } from './Typography';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 export type ProductImageSize = 'sm' | 'md' | 'lg' | 'xl';
 export type ProductImageVariant = 'rounded' | 'square' | 'circle';
@@ -82,13 +82,18 @@ export function ProductImage({
   const [error, setError] = useState(false);
   const [zoomVisible, setZoomVisible] = useState(false);
   
-  const backgroundColor = useThemeColor(
+  const paperTheme = useTheme();
+  const themeBackgroundColor = useThemeColor(
     { light: lightColor, dark: darkColor },
     'card'
   );
-  const borderColor = useThemeColor({}, 'border');
-  const textColor = useThemeColor({}, 'text');
-  const iconColor = useThemeColor({}, 'icon');
+  const themeBorderColor = useThemeColor({}, 'border');
+  const themeIconColor = useThemeColor({}, 'icon');
+
+  // Use Paper theme colors as fallback
+  const backgroundColor = themeBackgroundColor || paperTheme.colors.surfaceVariant;
+  const borderColor = themeBorderColor || paperTheme.colors.outline;
+  const iconColor = themeIconColor || paperTheme.colors.onSurfaceVariant;
 
   const imageSource = source || (uri ? { uri } : null);
   const containerStyle = getContainerStyle(size, variant, backgroundColor, borderColor);
@@ -119,7 +124,7 @@ export function ProductImage({
   };
 
   const renderPlaceholder = () => (
-    <View style={[containerStyle, styles.placeholder]}>
+    <Surface style={[containerStyle, styles.placeholder]} elevation={0}>
       <Ionicons
         name={placeholderIcon as any}
         size={getSizeValue(size) / 3}
@@ -127,44 +132,41 @@ export function ProductImage({
       />
       <Typography
         variant="caption"
-        color="muted"
-        style={styles.placeholderText}
+        style={[styles.placeholderText, { color: paperTheme.colors.onSurfaceVariant }]}
       >
         {placeholder}
       </Typography>
-    </View>
+    </Surface>
   );
 
   const renderError = () => (
-    <View style={[containerStyle, styles.error]}>
+    <Surface style={[containerStyle, styles.error]} elevation={0}>
       <Ionicons
         name="alert-circle-outline"
         size={getSizeValue(size) / 3}
-        color={iconColor}
+        color={paperTheme.colors.error}
       />
       {showError && (
         <Typography
           variant="caption"
-          color="error"
-          style={styles.errorText}
+          style={[styles.errorText, { color: paperTheme.colors.error }]}
         >
           {errorMessage}
         </Typography>
       )}
-    </View>
+    </Surface>
   );
 
   const renderLoading = () => (
-    <View style={[containerStyle, styles.loading]}>
-      <ActivityIndicator
+    <View style={[containerStyle, styles.loading, { backgroundColor: paperTheme.colors.surface }]}>
+      <PaperActivityIndicator
         size="small"
-        color={iconColor}
+        color={paperTheme.colors.primary}
       />
       {showLoading && (
         <Typography
           variant="caption"
-          color="muted"
-          style={styles.loadingText}
+          style={[styles.loadingText, { color: paperTheme.colors.onSurfaceVariant }]}
         >
           Loading...
         </Typography>
@@ -176,31 +178,33 @@ export function ProductImage({
     const ImageComponent = zoomable ? TouchableOpacity : View;
     
     return (
-      <ImageComponent
-        style={containerStyle}
-        onPress={zoomable ? handleZoomOpen : undefined}
-        accessibilityRole={zoomable ? 'button' : 'image'}
-        accessibilityLabel={alt || 'Product image'}
-        accessibilityHint={zoomable ? 'Tap to zoom' : undefined}
-      >
-        <Image
-          source={imageSource!}
-          style={imageStyle}
-          onLoad={handleLoad}
-          onError={handleError}
-          resizeMode="cover"
-        />
-        {zoomable && !loading && !error && (
-          <View style={styles.zoomIcon}>
-            <Ionicons
-              name="expand-outline"
-              size={16}
-              color="white"
-            />
-          </View>
-        )}
-        {loading && renderLoading()}
-      </ImageComponent>
+      <Surface style={containerStyle} elevation={1}>
+        <ImageComponent
+          style={{ flex: 1 }}
+          onPress={zoomable ? handleZoomOpen : undefined}
+          accessibilityRole={zoomable ? 'button' : 'image'}
+          accessibilityLabel={alt || 'Product image'}
+          accessibilityHint={zoomable ? 'Tap to zoom' : undefined}
+        >
+          <Image
+            source={imageSource!}
+            style={imageStyle}
+            onLoad={handleLoad}
+            onError={handleError}
+            resizeMode="cover"
+          />
+          {zoomable && !loading && !error && (
+            <View style={[styles.zoomIcon, { backgroundColor: paperTheme.colors.backdrop }]}>
+              <Ionicons
+                name="expand-outline"
+                size={16}
+                color={paperTheme.colors.onSurface}
+              />
+            </View>
+          )}
+          {loading && renderLoading()}
+        </ImageComponent>
+      </Surface>
     );
   };
 
@@ -211,7 +215,7 @@ export function ProductImage({
       animationType="fade"
       onRequestClose={handleZoomClose}
     >
-      <View style={styles.modalContainer}>
+      <View style={[styles.modalContainer, { backgroundColor: paperTheme.colors.backdrop }]}>
         <TouchableOpacity
           style={styles.modalOverlay}
           onPress={handleZoomClose}
@@ -219,12 +223,15 @@ export function ProductImage({
           accessibilityLabel="Close zoom view"
         >
           <View style={styles.modalHeader}>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={handleZoomClose}
-            >
-              <Ionicons name="close" size={24} color="white" />
-            </TouchableOpacity>
+            <Surface style={styles.closeButton} elevation={3}>
+              <TouchableOpacity onPress={handleZoomClose}>
+                <Ionicons 
+                  name="close" 
+                  size={24} 
+                  color={paperTheme.colors.onSurface} 
+                />
+              </TouchableOpacity>
+            </Surface>
           </View>
           
           <ScrollView
@@ -364,7 +371,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    opacity: 0.9,
   },
   loadingText: {
     marginTop: 8,
@@ -373,13 +380,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 8,
     right: 8,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     borderRadius: 12,
     padding: 4,
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.9)',
   },
   modalOverlay: {
     flex: 1,
@@ -391,7 +396,6 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   closeButton: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     borderRadius: 20,
     padding: 8,
   },

@@ -5,9 +5,10 @@ import {
     View,
     ViewStyle,
 } from 'react-native';
+import { Surface, useTheme } from 'react-native-paper';
 
-import { Ionicons } from '@expo/vector-icons';
 import { Button } from './Button';
+import { Ionicons } from '@expo/vector-icons';
 import { Typography } from './Typography';
 
 export type ErrorBoundaryVariant = 'minimal' | 'detailed' | 'centered' | 'inline';
@@ -35,6 +36,8 @@ export interface ErrorBoundaryProps {
   onRetry?: () => void;
   /** Custom container style */
   style?: ViewStyle;
+  /** Paper theme (injected by wrapper) */
+  theme?: any;
 }
 
 export interface ErrorBoundaryState {
@@ -47,7 +50,7 @@ export interface ErrorInfo {
   componentStack: string;
 }
 
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+class ErrorBoundaryComponent extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -84,20 +87,32 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   };
 
   renderMinimalError() {
+    const { theme } = this.props;
+    
     return (
-      <View style={[styles.container, styles.minimal, this.props.style]}>
-        <Ionicons name="alert-circle-outline" size={20} color="#FF6B6B" />
-        <Typography variant="body2" color="error" style={styles.minimalText}>
+      <Surface style={[styles.container, styles.minimal, this.props.style]} elevation={0}>
+        <Ionicons 
+          name="alert-circle-outline" 
+          size={20} 
+          color={theme?.colors.error || '#FF6B6B'} 
+        />
+        <Typography 
+          variant="body2" 
+          style={[styles.minimalText, { color: theme?.colors.error || '#FF6B6B' }]}
+        >
           Something went wrong
         </Typography>
         {this.props.showRetry && (
           <TouchableOpacity onPress={this.resetError} style={styles.retryLink}>
-            <Typography variant="body2" color="primary">
+            <Typography 
+              variant="body2" 
+              style={{ color: theme?.colors.primary || '#007AFF' }}
+            >
               Retry
             </Typography>
           </TouchableOpacity>
         )}
-      </View>
+      </Surface>
     );
   }
 
@@ -108,36 +123,61 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       showRetry = true,
       retryText = 'Try Again',
       showDetails = __DEV__,
+      theme,
     } = this.props;
 
     return (
       <View style={[styles.container, styles.detailed, this.props.style]}>
         <View style={styles.iconContainer}>
-          <Ionicons name="alert-circle" size={48} color="#FF6B6B" />
+          <Ionicons 
+            name="alert-circle" 
+            size={48} 
+            color={theme?.colors.error || '#FF6B6B'} 
+          />
         </View>
         
-        <Typography variant="h5" weight="semibold" style={styles.title}>
+        <Typography 
+          variant="h5" 
+          weight="semibold" 
+          style={[styles.title, { color: theme?.colors.onSurface }]}
+        >
           {title}
         </Typography>
         
-        <Typography variant="body1" color="muted" style={styles.message}>
+        <Typography 
+          variant="body1" 
+          style={[styles.message, { color: theme?.colors.onSurfaceVariant }]}
+        >
           {message}
         </Typography>
 
         {showDetails && this.state.error && (
-          <View style={styles.detailsContainer}>
-            <Typography variant="body2" weight="medium" style={styles.detailsTitle}>
+          <Surface 
+            style={[styles.detailsContainer, { backgroundColor: theme?.colors.surfaceVariant }]} 
+            elevation={0}
+          >
+            <Typography 
+              variant="body2" 
+              weight="medium" 
+              style={[styles.detailsTitle, { color: theme?.colors.onSurfaceVariant }]}
+            >
               Error Details:
             </Typography>
-            <Typography variant="caption" color="muted" style={styles.errorDetails}>
+            <Typography 
+              variant="caption" 
+              style={[styles.errorDetails, { color: theme?.colors.onSurfaceVariant }]}
+            >
               {this.state.error.message}
             </Typography>
             {this.state.errorInfo?.componentStack && (
-              <Typography variant="caption" color="muted" style={styles.errorDetails}>
+              <Typography 
+                variant="caption" 
+                style={[styles.errorDetails, { color: theme?.colors.onSurfaceVariant }]}
+              >
                 {this.state.errorInfo.componentStack}
               </Typography>
             )}
-          </View>
+          </Surface>
         )}
 
         {showRetry && (
@@ -158,18 +198,30 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       message = 'Please try refreshing the page',
       showRetry = true,
       retryText = 'Refresh',
+      theme,
     } = this.props;
 
     return (
       <View style={[styles.container, styles.centered, this.props.style]}>
         <View style={styles.centeredContent}>
-          <Ionicons name="warning-outline" size={64} color="#FF6B6B" />
+          <Ionicons 
+            name="warning-outline" 
+            size={64} 
+            color={theme?.colors.error || '#FF6B6B'} 
+          />
           
-          <Typography variant="h4" weight="bold" style={styles.centeredTitle}>
+          <Typography 
+            variant="h4" 
+            weight="bold" 
+            style={[styles.centeredTitle, { color: theme?.colors.onSurface }]}
+          >
             {title}
           </Typography>
           
-          <Typography variant="body1" color="muted" style={styles.centeredMessage}>
+          <Typography 
+            variant="body1" 
+            style={[styles.centeredMessage, { color: theme?.colors.onSurfaceVariant }]}
+          >
             {message}
           </Typography>
 
@@ -188,22 +240,35 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   renderInlineError() {
-    const { message = 'Error loading content' } = this.props;
+    const { message = 'Error loading content', theme } = this.props;
 
     return (
-      <View style={[styles.container, styles.inline, this.props.style]}>
-        <Ionicons name="warning" size={16} color="#FF6B6B" />
-        <Typography variant="caption" color="error" style={styles.inlineText}>
+      <Surface 
+        style={[styles.container, styles.inline, this.props.style]} 
+        elevation={0}
+      >
+        <Ionicons 
+          name="warning" 
+          size={16} 
+          color={theme?.colors.error || '#FF6B6B'} 
+        />
+        <Typography 
+          variant="caption" 
+          style={[styles.inlineText, { color: theme?.colors.error || '#FF6B6B' }]}
+        >
           {message}
         </Typography>
         {this.props.showRetry && (
           <TouchableOpacity onPress={this.resetError} style={styles.inlineRetry}>
-            <Typography variant="caption" color="primary">
+            <Typography 
+              variant="caption" 
+              style={{ color: theme?.colors.primary || '#007AFF' }}
+            >
               Retry
             </Typography>
           </TouchableOpacity>
         )}
-      </View>
+      </Surface>
     );
   }
 
@@ -239,6 +304,12 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 }
 
+// Wrapper component to inject Paper theme
+export function ErrorBoundary(props: Omit<ErrorBoundaryProps, 'theme'>) {
+  const theme = useTheme();
+  return <ErrorBoundaryComponent {...props} theme={theme} />;
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -247,10 +318,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 12,
-    backgroundColor: '#FFF5F5',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#FED7D7',
   },
   minimalText: {
     marginLeft: 8,
@@ -277,7 +346,6 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   detailsContainer: {
-    backgroundColor: '#F7F7F7',
     padding: 16,
     borderRadius: 8,
     marginBottom: 20,
@@ -320,7 +388,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 8,
-    backgroundColor: '#FFF5F5',
     borderRadius: 4,
   },
   inlineText: {
@@ -333,18 +400,18 @@ const styles = StyleSheet.create({
 });
 
 // Predefined component variants for common use cases
-export const MinimalErrorBoundary = (props: Omit<ErrorBoundaryProps, 'variant'>) => (
+export const MinimalErrorBoundary = (props: Omit<ErrorBoundaryProps, 'variant' | 'theme'>) => (
   <ErrorBoundary variant="minimal" {...props} />
 );
 
-export const DetailedErrorBoundary = (props: Omit<ErrorBoundaryProps, 'variant'>) => (
+export const DetailedErrorBoundary = (props: Omit<ErrorBoundaryProps, 'variant' | 'theme'>) => (
   <ErrorBoundary variant="detailed" {...props} />
 );
 
-export const CenteredErrorBoundary = (props: Omit<ErrorBoundaryProps, 'variant'>) => (
+export const CenteredErrorBoundary = (props: Omit<ErrorBoundaryProps, 'variant' | 'theme'>) => (
   <ErrorBoundary variant="centered" {...props} />
 );
 
-export const InlineErrorBoundary = (props: Omit<ErrorBoundaryProps, 'variant'>) => (
+export const InlineErrorBoundary = (props: Omit<ErrorBoundaryProps, 'variant' | 'theme'>) => (
   <ErrorBoundary variant="inline" {...props} />
 ); 
