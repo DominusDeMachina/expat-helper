@@ -1,7 +1,15 @@
+import * as AuthSession from 'expo-auth-session'
+import * as Linking from 'expo-linking'
+import * as WebBrowser from 'expo-web-browser'
+
 import { AuthError, Session, User } from '@supabase/supabase-js'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
+import { Platform } from 'react-native'
 import { supabase } from '../config/supabase/client'
+
+// Complete the OAuth flow in the browser for better UX
+WebBrowser.maybeCompleteAuthSession()
 
 // Types for our authentication context
 export interface UserProfile {
@@ -221,23 +229,87 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }
 
+  // Helper function to get redirect URL
+  const getRedirectUrl = () => {
+    if (Platform.OS === 'web') {
+      return `${window.location.origin}/auth/callback`
+    }
+    return Linking.createURL('/auth/callback')
+  }
+
   // Sign in with Google
   const signInWithGoogle = async () => {
     try {
       setAuthState(prev => ({ ...prev, loading: true, error: null }))
 
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
+      if (Platform.OS === 'web') {
+        // Web implementation
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: getRedirectUrl(),
+          },
+        })
 
-      if (error) {
-        setAuthState(prev => ({ ...prev, loading: false, error: error.message }))
-        return { error }
+        if (error) {
+          setAuthState(prev => ({ ...prev, loading: false, error: error.message }))
+          return { error }
+        }
+      } else {
+        // Mobile implementation using AuthSession
+        const redirectUrl = AuthSession.makeRedirectUri()
+
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: redirectUrl,
+            queryParams: {
+              access_type: 'offline',
+              prompt: 'consent',
+            },
+          },
+        })
+
+        if (error) {
+          setAuthState(prev => ({ ...prev, loading: false, error: error.message }))
+          return { error }
+        }
+
+        if (data?.url) {
+          // Open the OAuth URL in the browser
+          const result = await WebBrowser.openAuthSessionAsync(
+            data.url,
+            redirectUrl
+          )
+
+          if (result.type === 'success' && result.url) {
+            // Extract the URL parameters
+            const url = new URL(result.url)
+            const params = new URLSearchParams(url.hash.substring(1))
+            
+            // Handle the OAuth callback
+            const accessToken = params.get('access_token')
+            const refreshToken = params.get('refresh_token')
+            
+            if (accessToken) {
+              const { error: sessionError } = await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken || '',
+              })
+              
+              if (sessionError) {
+                setAuthState(prev => ({ ...prev, loading: false, error: sessionError.message }))
+                return { error: sessionError }
+              }
+            }
+          } else if (result.type === 'cancel') {
+            setAuthState(prev => ({ ...prev, loading: false }))
+            return { error: { message: 'Authentication was cancelled' } as AuthError }
+          }
+        }
       }
 
+      setAuthState(prev => ({ ...prev, loading: false }))
       return { error: null }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred'
@@ -251,18 +323,70 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setAuthState(prev => ({ ...prev, loading: true, error: null }))
 
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'facebook',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
+      if (Platform.OS === 'web') {
+        // Web implementation
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'facebook',
+          options: {
+            redirectTo: getRedirectUrl(),
+          },
+        })
 
-      if (error) {
-        setAuthState(prev => ({ ...prev, loading: false, error: error.message }))
-        return { error }
+        if (error) {
+          setAuthState(prev => ({ ...prev, loading: false, error: error.message }))
+          return { error }
+        }
+      } else {
+        // Mobile implementation using AuthSession
+        const redirectUrl = AuthSession.makeRedirectUri()
+
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'facebook',
+          options: {
+            redirectTo: redirectUrl,
+          },
+        })
+
+        if (error) {
+          setAuthState(prev => ({ ...prev, loading: false, error: error.message }))
+          return { error }
+        }
+
+        if (data?.url) {
+          // Open the OAuth URL in the browser
+          const result = await WebBrowser.openAuthSessionAsync(
+            data.url,
+            redirectUrl
+          )
+
+          if (result.type === 'success' && result.url) {
+            // Extract the URL parameters
+            const url = new URL(result.url)
+            const params = new URLSearchParams(url.hash.substring(1))
+            
+            // Handle the OAuth callback
+            const accessToken = params.get('access_token')
+            const refreshToken = params.get('refresh_token')
+            
+            if (accessToken) {
+              const { error: sessionError } = await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken || '',
+              })
+              
+              if (sessionError) {
+                setAuthState(prev => ({ ...prev, loading: false, error: sessionError.message }))
+                return { error: sessionError }
+              }
+            }
+          } else if (result.type === 'cancel') {
+            setAuthState(prev => ({ ...prev, loading: false }))
+            return { error: { message: 'Authentication was cancelled' } as AuthError }
+          }
+        }
       }
 
+      setAuthState(prev => ({ ...prev, loading: false }))
       return { error: null }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred'
@@ -276,18 +400,70 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setAuthState(prev => ({ ...prev, loading: true, error: null }))
 
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'azure',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
+      if (Platform.OS === 'web') {
+        // Web implementation
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'azure',
+          options: {
+            redirectTo: getRedirectUrl(),
+          },
+        })
 
-      if (error) {
-        setAuthState(prev => ({ ...prev, loading: false, error: error.message }))
-        return { error }
+        if (error) {
+          setAuthState(prev => ({ ...prev, loading: false, error: error.message }))
+          return { error }
+        }
+      } else {
+        // Mobile implementation using AuthSession
+        const redirectUrl = AuthSession.makeRedirectUri()
+
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'azure',
+          options: {
+            redirectTo: redirectUrl,
+          },
+        })
+
+        if (error) {
+          setAuthState(prev => ({ ...prev, loading: false, error: error.message }))
+          return { error }
+        }
+
+        if (data?.url) {
+          // Open the OAuth URL in the browser
+          const result = await WebBrowser.openAuthSessionAsync(
+            data.url,
+            redirectUrl
+          )
+
+          if (result.type === 'success' && result.url) {
+            // Extract the URL parameters
+            const url = new URL(result.url)
+            const params = new URLSearchParams(url.hash.substring(1))
+            
+            // Handle the OAuth callback
+            const accessToken = params.get('access_token')
+            const refreshToken = params.get('refresh_token')
+            
+            if (accessToken) {
+              const { error: sessionError } = await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken || '',
+              })
+              
+              if (sessionError) {
+                setAuthState(prev => ({ ...prev, loading: false, error: sessionError.message }))
+                return { error: sessionError }
+              }
+            }
+          } else if (result.type === 'cancel') {
+            setAuthState(prev => ({ ...prev, loading: false }))
+            return { error: { message: 'Authentication was cancelled' } as AuthError }
+          }
+        }
       }
 
+      setAuthState(prev => ({ ...prev, loading: false }))
       return { error: null }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred'
