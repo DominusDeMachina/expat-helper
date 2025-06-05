@@ -1,32 +1,24 @@
-import { SafeAreaView, SafeAreaViewProps } from 'react-native-safe-area-context';
+import { View, ViewProps, ViewStyle } from 'react-native';
 
-import React from 'react';
-import { ViewStyle } from 'react-native';
+import { ReactNode } from 'react';
 
-interface ScreenProps extends SafeAreaViewProps {
-  children: React.ReactNode;
+interface ScreenProps extends ViewProps {
+  children: ReactNode;
   style?: ViewStyle;
 }
 
 /**
- * Screen component that provides SafeAreaView with consistent styling.
- * Use this component as the root for all screens to ensure proper safe area handling.
+ * Screen component that provides a consistent container with flex: 1.
+ * This replaces the previous SafeAreaView implementation.
  * 
- * @example
- * ```tsx
- * export default function MyScreen() {
- *   return (
- *     <Screen>
- *       <Text>My screen content</Text>
- *     </Screen>
- *   );
- * }
- * ```
+ * @param children - The content to render inside the screen
+ * @param style - Additional styles to apply
+ * @param props - Other view props
  */
-export const Screen: React.FC<ScreenProps> = ({ children, style, ...props }) => {
+export function Screen({ children, style, ...props }: ScreenProps) {
   return (
-    <SafeAreaView style={[{ flex: 1 }, style]} {...props}>
+    <View style={[{ flex: 1 }, style]} {...props}>
       {children}
-    </SafeAreaView>
+    </View>
   );
-}; 
+} 

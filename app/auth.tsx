@@ -1,11 +1,10 @@
-import React, { useState } from 'react'
 import { KeyboardAvoidingView, Platform, StyleSheet, View, useColorScheme } from 'react-native'
+import React, { useState } from 'react'
 
-import { router } from 'expo-router'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { Colors } from '../constants/Colors'
 import { SignInForm } from '../components/auth/SignInForm'
 import { SignUpForm } from '../components/auth/SignUpForm'
-import { Colors } from '../constants/Colors'
+import { router } from 'expo-router'
 import { useAuth } from '../contexts/AuthContext'
 
 export default function AuthScreen() {
@@ -17,13 +16,13 @@ export default function AuthScreen() {
   // Redirect to main app if already authenticated
   React.useEffect(() => {
     if (user) {
-      router.replace('/')
+      router.replace('/(tabs)')
     }
   }, [user])
 
   const handleAuthSuccess = () => {
     // Navigate to main app after successful authentication
-    router.replace('/')
+    router.replace('/(tabs)')
   }
 
   const switchToSignIn = () => {
@@ -35,7 +34,7 @@ export default function AuthScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
+    <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <KeyboardAvoidingView
         style={[styles.container, { backgroundColor: colors.background }]}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -55,7 +54,7 @@ export default function AuthScreen() {
           )}
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   )
 }
 

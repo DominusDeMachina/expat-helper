@@ -343,7 +343,6 @@ const styles = StyleSheet.create({
   message: {
     textAlign: 'center',
     marginBottom: 20,
-    lineHeight: 22,
   },
   detailsContainer: {
     padding: 16,
@@ -357,7 +356,6 @@ const styles = StyleSheet.create({
   },
   errorDetails: {
     marginBottom: 8,
-    lineHeight: 18,
   },
   retryButton: {
     minWidth: 120,
@@ -379,7 +377,6 @@ const styles = StyleSheet.create({
   centeredMessage: {
     textAlign: 'center',
     marginBottom: 32,
-    lineHeight: 24,
   },
   centeredButton: {
     minWidth: 150,

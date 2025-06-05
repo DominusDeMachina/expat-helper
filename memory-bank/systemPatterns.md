@@ -37,34 +37,12 @@ App Root (_layout.tsx)
 
 ## Design Patterns
 
-### 1. Safe Area Handling Pattern ⭐ **CRITICAL**
+### 1. Screen Container Pattern
 
-**Usage**: All screens MUST use SafeAreaView to handle device safe areas (notches, status bars, home indicators)
+**Usage**: All screens use a consistent container approach with flex: 1 for full-screen layout
 
 **Implementation**:
 ```typescript
-// Root Layout (Required)
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-
-export default function RootLayout() {
-  return (
-    <SafeAreaProvider>
-      {/* App content */}
-    </SafeAreaProvider>
-  );
-}
-
-// Individual Screens (Required)
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-export default function MyScreen() {
-  return (
-    <SafeAreaView style={{ flex: 1 }}>
-      {/* Screen content */}
-    </SafeAreaView>
-  );
-}
-
 // Reusable Screen Component (Recommended)
 import { Screen } from '@/components/ui/Screen';
 
@@ -75,18 +53,40 @@ export default function MyScreen() {
     </Screen>
   );
 }
+
+// Direct View Usage (Alternative)
+import { View } from 'react-native';
+
+export default function MyScreen() {
+  return (
+    <View style={{ flex: 1 }}>
+      {/* Screen content */}
+    </View>
+  );
+}
+
+// ThemedView for Theme Support
+import { ThemedView } from '@/components/ThemedView';
+
+export default function MyScreen() {
+  return (
+    <ThemedView style={{ flex: 1 }}>
+      {/* Screen content */}
+    </ThemedView>
+  );
+}
 ```
 
 **Pattern Requirements**:
-- ✅ SafeAreaProvider configured in root layout
-- ✅ SafeAreaView used in all screens 
+- ✅ Consistent container pattern across all screens
 - ✅ Reusable Screen component available for consistency
-- ✅ Safe area handling for auth screens, modal screens, and main app screens
+- ✅ Full-screen layout using flex: 1
+- ✅ Theme-aware containers using ThemedView when needed
 
 **Examples**:
-- Auth screen: Wraps KeyboardAvoidingView with SafeAreaView
-- Not-found screen: Uses SafeAreaView directly
-- Tab screens: Use ParallaxScrollView (handles safe areas internally) or SafeAreaView
+- Auth screen: Uses View with flex: 1 as container
+- Not-found screen: Uses ThemedView for theme-aware container
+- Tab screens: Use ParallaxScrollView or Screen component
 - Custom screens: Use Screen component for consistency
 
 ### 2. Composition Pattern

@@ -34,8 +34,7 @@ export interface TypographyProps extends TextProps {
   lowercase?: boolean;
   /** Whether text should be capitalized */
   capitalize?: boolean;
-  /** Line height multiplier (e.g., 1.5 for 150% line height) */
-  lineHeightMultiplier?: number;
+
   /** Letter spacing adjustment */
   letterSpacing?: number;
   /** Custom colors for light/dark themes */
@@ -55,7 +54,6 @@ export function Typography({
   uppercase = false,
   lowercase = false,
   capitalize = false,
-  lineHeightMultiplier,
   letterSpacing,
   lightColor,
   darkColor,
@@ -82,10 +80,7 @@ export function Typography({
     ...transformStyle,
   };
 
-  // Apply line height multiplier if provided
-  if (lineHeightMultiplier && variantStyle.lineHeight) {
-    combinedStyle.lineHeight = variantStyle.lineHeight * lineHeightMultiplier;
-  }
+
 
   // Apply letter spacing if provided
   if (letterSpacing !== undefined) {
@@ -176,73 +171,61 @@ function getVariantStyle(variant: TypographyVariant): TextStyle {
     case 'h1':
       return {
         fontSize: 48,
-        lineHeight: 56,
         fontWeight: '700',
       };
     case 'h2':
       return {
         fontSize: 40,
-        lineHeight: 48,
         fontWeight: '700',
       };
     case 'h3':
       return {
         fontSize: 32,
-        lineHeight: 40,
         fontWeight: '600',
       };
     case 'h4':
       return {
         fontSize: 28,
-        lineHeight: 36,
         fontWeight: '600',
       };
     case 'h5':
       return {
         fontSize: 24,
-        lineHeight: 32,
         fontWeight: '600',
       };
     case 'h6':
       return {
         fontSize: 20,
-        lineHeight: 28,
         fontWeight: '600',
       };
     case 'subtitle1':
       return {
         fontSize: 18,
-        lineHeight: 26,
         fontWeight: '500',
       };
     case 'subtitle2':
       return {
         fontSize: 16,
-        lineHeight: 24,
         fontWeight: '500',
       };
     case 'body1':
       return {
         fontSize: 16,
-        lineHeight: 24,
         fontWeight: '400',
       };
     case 'body2':
       return {
         fontSize: 14,
-        lineHeight: 20,
         fontWeight: '400',
       };
     case 'caption':
       return {
         fontSize: 12,
-        lineHeight: 16,
         fontWeight: '400',
       };
     case 'overline':
       return {
         fontSize: 10,
-        lineHeight: 16,
         fontWeight: '500',
         textTransform: 'uppercase',
         letterSpacing: 1.5,
@@ -250,7 +233,6 @@ function getVariantStyle(variant: TypographyVariant): TextStyle {
     case 'button':
       return {
         fontSize: 14,
-        lineHeight: 20,
         fontWeight: '500',
         textTransform: 'uppercase',
         letterSpacing: 1.25,
@@ -258,14 +240,12 @@ function getVariantStyle(variant: TypographyVariant): TextStyle {
     case 'link':
       return {
         fontSize: 16,
-        lineHeight: 24,
         fontWeight: '400',
         textDecorationLine: 'underline',
       };
     default:
       return {
         fontSize: 16,
-        lineHeight: 24,
         fontWeight: '400',
       };
   }

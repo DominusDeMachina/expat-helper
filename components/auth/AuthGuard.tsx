@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import { StyleSheet, Text, View, useColorScheme } from 'react-native'
 
-import { router } from 'expo-router'
 import { Colors } from '../../constants/Colors'
+import { router } from 'expo-router'
 import { useAuth } from '../../contexts/AuthContext'
 
 interface AuthGuardProps {

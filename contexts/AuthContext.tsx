@@ -155,6 +155,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Sign in with email and password
   const signIn = async (data: SignInData) => {
     try {
+      console.log('🔐 Starting sign in process...')
+      console.log('Supabase client config:', {
+        url: process.env.EXPO_PUBLIC_SUPABASE_URL,
+        hasKey: !!process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
+      })
+      
       setAuthState(prev => ({ ...prev, loading: true, error: null }))
 
       const { error } = await supabase.auth.signInWithPassword({
@@ -163,14 +169,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       })
 
       if (error) {
+        console.error('❌ Supabase auth error:', error)
         setAuthState(prev => ({ ...prev, loading: false, error: error.message }))
         return { error }
       }
 
+      console.log('✅ Sign in successful')
       setAuthState(prev => ({ ...prev, loading: false }))
       return { error: null }
     } catch (err) {
+      console.error('🚨 Network/connection error:', err)
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred'
+      
+      // Specific network error handling
+      if (errorMessage.includes('Network request failed') || errorMessage.includes('network')) {
+        const detailedError = 'Network connection failed. Please check your internet connection and try again.'
+        setAuthState(prev => ({ ...prev, loading: false, error: detailedError }))
+        return { error: { message: detailedError } as AuthError }
+      }
+      
       setAuthState(prev => ({ ...prev, loading: false, error: errorMessage }))
       return { error: { message: errorMessage } as AuthError }
     }

@@ -1,7 +1,8 @@
+import { Alert, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, useColorScheme } from 'react-native'
 import React, { useState } from 'react'
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View, useColorScheme } from 'react-native'
 
 import { Colors } from '../../constants/Colors'
+import { testSupabaseConnection } from '../../config/supabase/client'
 import { useAuth } from '../../contexts/AuthContext'
 
 interface SignInFormProps {
@@ -10,6 +11,15 @@ interface SignInFormProps {
 }
 
 export const SignInForm: React.FC<SignInFormProps> = ({ onSignUpPress, onSuccess }) => {
+  // Debug environment variables
+  console.log('Supabase URL:', process.env.EXPO_PUBLIC_SUPABASE_URL)
+  console.log('Supabase Key exists:', !!process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY)
+  
+  // Test connection on component mount
+  React.useEffect(() => {
+    testSupabaseConnection()
+  }, [])
+  
   const { signIn, signInWithGoogle, signInWithFacebook, signInWithMicrosoft, resetPassword, loading, error, clearError } = useAuth()
   const colorScheme = useColorScheme()
   const colors = Colors[colorScheme ?? 'light']
@@ -108,8 +118,9 @@ export const SignInForm: React.FC<SignInFormProps> = ({ onSignUpPress, onSuccess
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.title, { color: colors.text }]}>Welcome Back</Text>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <Text style={[styles.title, { color: colors.text }]}>Welcome Back</Text>
       <Text style={[styles.subtitle, { color: colors.text }]}>
         Sign in to discover food products that taste like home
       </Text>
@@ -272,11 +283,15 @@ export const SignInForm: React.FC<SignInFormProps> = ({ onSignUpPress, onSuccess
           </View>
         </View>
       )}
-    </View>
+      </View>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     padding: 20,
