@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useCallback, useMemo, useState } from 'react';
 import { TextStyle, View, ViewStyle } from 'react-native';
 import { HelperText, TextInput as PaperTextInput } from 'react-native-paper';
 
@@ -53,7 +53,34 @@ export interface InputProps {
   testID?: string;
 }
 
-export const Input = forwardRef<any, InputProps>(function Input(props, ref) {
+// Memoize variant to mode mapping
+const VARIANT_MODE_MAP = {
+  outlined: 'outlined',
+  filled: 'flat',
+  default: 'outlined',
+} as const;
+
+// Memoize keyboard type mapping
+const TYPE_KEYBOARD_MAP = {
+  email: 'email-address',
+  number: 'numeric',
+  text: 'default',
+  password: 'default',
+} as const;
+
+// Memoize color constants
+const INPUT_COLORS = {
+  error: {
+    error: true,
+    activeOutlineColor: '#dc3545',
+    outlineColor: '#dc3545',
+  },
+  success: {
+    activeOutlineColor: '#28a745',
+  },
+} as const;
+
+const InputComponent = forwardRef<any, InputProps>(function Input(props, ref) {
   const {
     value,
     placeholder,
@@ -79,65 +106,41 @@ export const Input = forwardRef<any, InputProps>(function Input(props, ref) {
     testID,
     ...restProps
   } = props;
+  
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
-  const isDisabled = disabled || state === 'disabled';
-  const hasError = state === 'error' || !!errorMessage;
-  const hasSuccess = state === 'success' || !!successMessage;
+  // Memoize computed values
+  const isDisabled = useMemo(() => disabled || state === 'disabled', [disabled, state]);
+  const hasError = useMemo(() => state === 'error' || !!errorMessage, [state, errorMessage]);
+  const hasSuccess = useMemo(() => state === 'success' || !!successMessage, [state, successMessage]);
+  
+  const paperMode = useMemo(() => VARIANT_MODE_MAP[variant], [variant]);
+  const keyboardType = useMemo(() => TYPE_KEYBOARD_MAP[type], [type]);
+  const secureTextEntry = useMemo(() => type === 'password' && !showPassword, [type, showPassword]);
+  const finalLabel = useMemo(() => required && label ? `${label} *` : label, [required, label]);
 
-  // Get Paper TextInput mode based on variant
-  const getPaperMode = (variant: InputVariant) => {
-    switch (variant) {
-      case 'outlined':
-        return 'outlined';
-      case 'filled':
-        return 'flat';
-      case 'default':
-        return 'outlined';
-      default:
-        return 'outlined';
-    }
-  };
-
-  // Get keyboard type based on input type
-  const getKeyboardType = (type: InputType) => {
-    switch (type) {
-      case 'email':
-        return 'email-address';
-      case 'number':
-        return 'numeric';
-      case 'text':
-      case 'password':
-      default:
-        return 'default';
-    }
-  };
-
-  // Get secure text entry
-  const getSecureTextEntry = () => {
-    return type === 'password' && !showPassword;
-  };
-
-  // Handle focus
-  const handleFocus = () => {
+  // Memoize handlers to prevent recreation
+  const handleFocus = useCallback(() => {
     setIsFocused(true);
     onFocus?.();
-  };
+  }, [onFocus]);
 
-  // Handle blur
-  const handleBlur = () => {
+  const handleBlur = useCallback(() => {
     setIsFocused(false);
     onBlur?.();
-  };
+  }, [onBlur]);
 
-  // Toggle password visibility
-  const togglePasswordVisibility = () => {
+  const togglePasswordVisibility = useCallback(() => {
     setShowPassword(!showPassword);
-  };
+  }, [showPassword]);
 
-  // Build the right icon
-  const getRightIcon = () => {
+  // Memoize icon renderers to prevent recreation
+  const leftIconRenderer = useMemo(() => {
+    return leftIcon ? <PaperTextInput.Icon icon={() => leftIcon} /> : undefined;
+  }, [leftIcon]);
+
+  const rightIconRenderer = useMemo(() => {
     if (type === 'password') {
       return (
         <PaperTextInput.Icon
@@ -151,28 +154,24 @@ export const Input = forwardRef<any, InputProps>(function Input(props, ref) {
       return <PaperTextInput.Icon icon={() => rightIcon} />;
     }
     return undefined;
-  };
+  }, [type, showPassword, rightIcon, togglePasswordVisibility]);
 
-  // Get input colors based on state
-  const getInputColors = () => {
+  // Memoize input colors based on state
+  const inputColors = useMemo(() => {
     if (hasError) {
-      return {
-        error: true,
-        activeOutlineColor: '#dc3545',
-        outlineColor: '#dc3545',
-      };
+      return INPUT_COLORS.error;
     }
     if (hasSuccess) {
       return {
-        activeOutlineColor: '#28a745',
-        outlineColor: isFocused ? '#28a745' : undefined,
+        ...INPUT_COLORS.success,
+        outlineColor: isFocused ? INPUT_COLORS.success.activeOutlineColor : undefined,
       };
     }
     return {};
-  };
+  }, [hasError, hasSuccess, isFocused]);
 
-  // Get helper text with proper type and color
-  const getHelperText = () => {
+  // Memoize helper text object
+  const helper = useMemo(() => {
     if (errorMessage) {
       return { text: errorMessage, type: 'error' as const };
     }
@@ -183,10 +182,7 @@ export const Input = forwardRef<any, InputProps>(function Input(props, ref) {
       return { text: helperText, type: 'info' as const };
     }
     return null;
-  };
-
-  const finalLabel = required && label ? `${label} *` : label;
-  const helper = getHelperText();
+  }, [errorMessage, successMessage, helperText]);
 
   return (
     <View style={containerStyle}>
@@ -195,21 +191,21 @@ export const Input = forwardRef<any, InputProps>(function Input(props, ref) {
         label={finalLabel}
         placeholder={placeholder}
         value={value}
-        mode={getPaperMode(variant)}
+        mode={paperMode}
         disabled={isDisabled}
         multiline={multiline}
         numberOfLines={numberOfLines}
-        keyboardType={getKeyboardType(type)}
-        secureTextEntry={getSecureTextEntry()}
-        left={leftIcon ? <PaperTextInput.Icon icon={() => leftIcon} /> : undefined}
-        right={getRightIcon()}
+        keyboardType={keyboardType}
+        secureTextEntry={secureTextEntry}
+        left={leftIconRenderer}
+        right={rightIconRenderer}
         onChangeText={onChangeText}
         onFocus={handleFocus}
         onBlur={handleBlur}
         style={style as any}
         contentStyle={textStyle}
         testID={testID}
-        {...getInputColors()}
+        {...inputColors}
         {...restProps}
       />
       {helper && (
@@ -219,4 +215,7 @@ export const Input = forwardRef<any, InputProps>(function Input(props, ref) {
       )}
     </View>
   );
-}); 
+});
+
+// Memoize the component to prevent unnecessary re-renders
+export const Input = React.memo(InputComponent); 

@@ -1,5 +1,5 @@
 import { useThemeColor } from '@/hooks/useThemeColor';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { type TextProps, TextStyle } from 'react-native';
 import { Text as PaperText } from 'react-native-paper';
 
@@ -44,7 +44,61 @@ export interface TypographyProps extends TextProps {
   children: React.ReactNode;
 }
 
-export function Typography({
+// Memoize style mappings to prevent recreation
+const VARIANT_STYLES = {
+  h1: { fontSize: 48, fontWeight: '700' as const },
+  h2: { fontSize: 40, fontWeight: '700' as const },
+  h3: { fontSize: 32, fontWeight: '600' as const },
+  h4: { fontSize: 28, fontWeight: '600' as const },
+  h5: { fontSize: 24, fontWeight: '600' as const },
+  h6: { fontSize: 20, fontWeight: '600' as const },
+  subtitle1: { fontSize: 18, fontWeight: '500' as const },
+  subtitle2: { fontSize: 16, fontWeight: '500' as const },
+  body1: { fontSize: 16, fontWeight: '400' as const },
+  body2: { fontSize: 14, fontWeight: '400' as const },
+  caption: { fontSize: 12, fontWeight: '400' as const },
+  overline: { fontSize: 10, fontWeight: '400' as const, textTransform: 'uppercase' as const },
+  button: { fontSize: 14, fontWeight: '500' as const, textTransform: 'uppercase' as const },
+  link: { fontSize: 16, fontWeight: '500' as const },
+} as const;
+
+const WEIGHT_STYLES = {
+  light: { fontWeight: '300' as const },
+  normal: { fontWeight: '400' as const },
+  medium: { fontWeight: '500' as const },
+  semibold: { fontWeight: '600' as const },
+  bold: { fontWeight: '700' as const },
+} as const;
+
+const COLOR_KEY_MAP = {
+  primary: 'tint',
+  secondary: 'icon',
+  success: 'tint',
+  error: 'notification',
+  warning: 'notification',
+  text: 'text',
+  muted: 'icon',
+  disabled: 'icon',
+} as const;
+
+const PAPER_VARIANT_MAP = {
+  h1: 'displayLarge',
+  h2: 'displayMedium',
+  h3: 'displaySmall',
+  h4: 'headlineLarge',
+  h5: 'headlineMedium',
+  h6: 'headlineSmall',
+  subtitle1: 'titleLarge',
+  subtitle2: 'titleMedium',
+  body1: 'bodyLarge',
+  body2: 'bodyMedium',
+  caption: 'bodySmall',
+  overline: 'labelSmall',
+  button: 'labelMedium',
+  link: 'labelLarge',
+} as const;
+
+const TypographyComponent: React.FC<TypographyProps> = ({
   variant = 'body1',
   weight = 'normal',
   align = 'left',
@@ -60,17 +114,30 @@ export function Typography({
   style,
   children,
   ...textProps
-}: TypographyProps) {
+}) => {
+  // Memoize color key lookup
+  const colorKey = useMemo(() => COLOR_KEY_MAP[color] || 'text', [color]);
+  
   const themeColor = useThemeColor(
     { light: lightColor, dark: darkColor },
-    getColorKey(color)
+    colorKey as keyof typeof import('@/constants/Colors').Colors.light
   );
 
-  const variantStyle = getVariantStyle(variant);
-  const weightStyle = getWeightStyle(weight);
-  const transformStyle = getTransformStyle(uppercase, lowercase, capitalize);
+  // Memoize style computations
+  const variantStyle = useMemo(() => VARIANT_STYLES[variant] || VARIANT_STYLES.body1, [variant]);
+  const weightStyle = useMemo(() => WEIGHT_STYLES[weight], [weight]);
+  const paperVariant = useMemo(() => PAPER_VARIANT_MAP[variant] || 'bodyMedium', [variant]);
 
-  const combinedStyle: TextStyle = {
+  // Memoize text transform style
+  const transformStyle = useMemo(() => {
+    if (uppercase) return { textTransform: 'uppercase' as const };
+    if (lowercase) return { textTransform: 'lowercase' as const };
+    if (capitalize) return { textTransform: 'capitalize' as const };
+    return {};
+  }, [uppercase, lowercase, capitalize]);
+
+  // Memoize combined style
+  const combinedStyle = useMemo((): TextStyle => ({
     ...variantStyle,
     ...weightStyle,
     color: themeColor,
@@ -78,250 +145,92 @@ export function Typography({
     fontStyle: italic ? 'italic' : 'normal',
     textDecorationLine: underline ? 'underline' : 'none',
     ...transformStyle,
-  };
+    ...(letterSpacing !== undefined && { letterSpacing }),
+  }), [
+    variantStyle,
+    weightStyle,
+    themeColor,
+    align,
+    italic,
+    underline,
+    transformStyle,
+    letterSpacing,
+  ]);
 
-
-
-  // Apply letter spacing if provided
-  if (letterSpacing !== undefined) {
-    combinedStyle.letterSpacing = letterSpacing;
-  }
-
-  // Map to Paper text variant for enhanced accessibility and theming
-  const paperVariant = getPaperVariant(variant);
+  // Memoize final style array
+  const finalStyle = useMemo(() => [combinedStyle, style], [combinedStyle, style]);
 
   return (
     <PaperText
       {...textProps}
-      variant={paperVariant}
-      style={[combinedStyle, style]}
+      variant={paperVariant as any}
+      style={finalStyle}
     >
       {children}
     </PaperText>
   );
-}
+};
 
-// Helper functions
-function getColorKey(color: TypographyColor): keyof typeof import('@/constants/Colors').Colors.light {
-  switch (color) {
-    case 'primary':
-      return 'tint';
-    case 'secondary':
-      return 'icon';
-    case 'success':
-      return 'tint'; // Would be success color in enhanced theme
-    case 'error':
-      return 'notification';
-    case 'warning':
-      return 'notification'; // Would be warning color in enhanced theme
-    case 'text':
-      return 'text';
-    case 'muted':
-      return 'icon';
-    case 'disabled':
-      return 'icon';
-    default:
-      return 'text';
-  }
-}
+// Memoize the main component
+export const Typography = React.memo(TypographyComponent);
 
-function getPaperVariant(variant: TypographyVariant): 
-  | 'displayLarge' | 'displayMedium' | 'displaySmall'
-  | 'headlineLarge' | 'headlineMedium' | 'headlineSmall'
-  | 'titleLarge' | 'titleMedium' | 'titleSmall'
-  | 'labelLarge' | 'labelMedium' | 'labelSmall'
-  | 'bodyLarge' | 'bodyMedium' | 'bodySmall' {
-  
-  switch (variant) {
-    case 'h1':
-      return 'displayLarge';
-    case 'h2':
-      return 'displayMedium';
-    case 'h3':
-      return 'displaySmall';
-    case 'h4':
-      return 'headlineLarge';
-    case 'h5':
-      return 'headlineMedium';
-    case 'h6':
-      return 'headlineSmall';
-    case 'subtitle1':
-      return 'titleLarge';
-    case 'subtitle2':
-      return 'titleMedium';
-    case 'body1':
-      return 'bodyLarge';
-    case 'body2':
-      return 'bodyMedium';
-    case 'caption':
-      return 'bodySmall';
-    case 'overline':
-      return 'labelSmall';
-    case 'button':
-      return 'labelMedium';
-    case 'link':
-      return 'labelLarge';
-    default:
-      return 'bodyMedium';
-  }
-}
-
-function getVariantStyle(variant: TypographyVariant): TextStyle {
-  switch (variant) {
-    case 'h1':
-      return {
-        fontSize: 48,
-        fontWeight: '700',
-      };
-    case 'h2':
-      return {
-        fontSize: 40,
-        fontWeight: '700',
-      };
-    case 'h3':
-      return {
-        fontSize: 32,
-        fontWeight: '600',
-      };
-    case 'h4':
-      return {
-        fontSize: 28,
-        fontWeight: '600',
-      };
-    case 'h5':
-      return {
-        fontSize: 24,
-        fontWeight: '600',
-      };
-    case 'h6':
-      return {
-        fontSize: 20,
-        fontWeight: '600',
-      };
-    case 'subtitle1':
-      return {
-        fontSize: 18,
-        fontWeight: '500',
-      };
-    case 'subtitle2':
-      return {
-        fontSize: 16,
-        fontWeight: '500',
-      };
-    case 'body1':
-      return {
-        fontSize: 16,
-        fontWeight: '400',
-      };
-    case 'body2':
-      return {
-        fontSize: 14,
-        fontWeight: '400',
-      };
-    case 'caption':
-      return {
-        fontSize: 12,
-        fontWeight: '400',
-      };
-    case 'overline':
-      return {
-        fontSize: 10,
-        fontWeight: '500',
-        textTransform: 'uppercase',
-        letterSpacing: 1.5,
-      };
-    case 'button':
-      return {
-        fontSize: 14,
-        fontWeight: '500',
-        textTransform: 'uppercase',
-        letterSpacing: 1.25,
-      };
-    case 'link':
-      return {
-        fontSize: 16,
-        fontWeight: '400',
-        textDecorationLine: 'underline',
-      };
-    default:
-      return {
-        fontSize: 16,
-        fontWeight: '400',
-      };
-  }
-}
-
-function getWeightStyle(weight: TypographyWeight): TextStyle {
-  switch (weight) {
-    case 'light':
-      return { fontWeight: '300' };
-    case 'normal':
-      return { fontWeight: '400' };
-    case 'medium':
-      return { fontWeight: '500' };
-    case 'semibold':
-      return { fontWeight: '600' };
-    case 'bold':
-      return { fontWeight: '700' };
-    default:
-      return { fontWeight: '400' };
-  }
-}
-
-function getTransformStyle(
-  uppercase: boolean,
-  lowercase: boolean,
-  capitalize: boolean
-): Partial<TextStyle> {
-  if (uppercase) {
-    return { textTransform: 'uppercase' };
-  }
-  if (lowercase) {
-    return { textTransform: 'lowercase' };
-  }
-  if (capitalize) {
-    return { textTransform: 'capitalize' };
-  }
-  return {};
-}
-
-// Convenience components for common typography variants
-export const Heading1 = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography {...props} variant="h1" />
+// Convenience components with proper memoization and display names
+const Heading1Component = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant="h1" {...props} />
 );
+Heading1Component.displayName = 'Heading1';
+export const Heading1 = React.memo(Heading1Component);
 
-export const Heading2 = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography {...props} variant="h2" />
+const Heading2Component = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant="h2" {...props} />
 );
+Heading2Component.displayName = 'Heading2';
+export const Heading2 = React.memo(Heading2Component);
 
-export const Heading3 = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography {...props} variant="h3" />
+const Heading3Component = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant="h3" {...props} />
 );
+Heading3Component.displayName = 'Heading3';
+export const Heading3 = React.memo(Heading3Component);
 
-export const Heading4 = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography {...props} variant="h4" />
+const Heading4Component = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant="h4" {...props} />
 );
+Heading4Component.displayName = 'Heading4';
+export const Heading4 = React.memo(Heading4Component);
 
-export const Heading5 = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography {...props} variant="h5" />
+const Heading5Component = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant="h5" {...props} />
 );
+Heading5Component.displayName = 'Heading5';
+export const Heading5 = React.memo(Heading5Component);
 
-export const Heading6 = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography {...props} variant="h6" />
+const Heading6Component = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant="h6" {...props} />
 );
+Heading6Component.displayName = 'Heading6';
+export const Heading6 = React.memo(Heading6Component);
 
-export const BodyText = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography {...props} variant="body1" />
+const BodyTextComponent = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant="body1" {...props} />
 );
+BodyTextComponent.displayName = 'BodyText';
+export const BodyText = React.memo(BodyTextComponent);
 
-export const SmallText = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography {...props} variant="body2" />
+const SmallTextComponent = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant="body2" {...props} />
 );
+SmallTextComponent.displayName = 'SmallText';
+export const SmallText = React.memo(SmallTextComponent);
 
-export const Caption = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography {...props} variant="caption" />
+const CaptionComponent = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant="caption" {...props} />
 );
+CaptionComponent.displayName = 'Caption';
+export const Caption = React.memo(CaptionComponent);
 
-export const Link = (props: Omit<TypographyProps, 'variant'>) => (
-  <Typography {...props} variant="link" />
-); 
+const LinkComponent = (props: Omit<TypographyProps, 'variant'>) => (
+  <Typography variant="link" {...props} />
+);
+LinkComponent.displayName = 'Link';
+export const Link = React.memo(LinkComponent); 

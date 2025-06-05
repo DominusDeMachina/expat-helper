@@ -1,0 +1,1203 @@
+{
+  "testRun": {
+    "timestamp": "2025-06-05T18:25:06.616Z",
+    "baseUrl": "http://localhost:19006",
+    "routes": [
+      "/",
+      "/home",
+      "/component-demo",
+      "/explore",
+      "/profile"
+    ],
+    "viewports": [
+      {
+        "name": "mobile",
+        "width": 375,
+        "height": 667
+      },
+      {
+        "name": "tablet",
+        "width": 768,
+        "height": 1024
+      },
+      {
+        "name": "desktop",
+        "width": 1200,
+        "height": 800
+      },
+      {
+        "name": "desktop-large",
+        "width": 1440,
+        "height": 900
+      }
+    ],
+    "browsers": [
+      "chrome",
+      "firefox",
+      "safari",
+      "edge"
+    ]
+  },
+  "results": {
+    "chrome": {
+      "browser": "chrome",
+      "status": "pending",
+      "tests": [
+        {
+          "route": "/",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-mobile-home.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-tablet-home.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-desktop-home.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-desktop-large-home.png"
+            }
+          ]
+        },
+        {
+          "route": "/home",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-mobile-homehome.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-tablet-homehome.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-desktop-homehome.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-desktop-large-homehome.png"
+            }
+          ]
+        },
+        {
+          "route": "/component-demo",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-mobile-homecomponent-demo.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-tablet-homecomponent-demo.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-desktop-homecomponent-demo.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-desktop-large-homecomponent-demo.png"
+            }
+          ]
+        },
+        {
+          "route": "/explore",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-mobile-homeexplore.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-tablet-homeexplore.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-desktop-homeexplore.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-desktop-large-homeexplore.png"
+            }
+          ]
+        },
+        {
+          "route": "/profile",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-mobile-homeprofile.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-tablet-homeprofile.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-desktop-homeprofile.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "chrome-desktop-large-homeprofile.png"
+            }
+          ]
+        }
+      ],
+      "componentTests": [
+        {
+          "component": "Button",
+          "variants": [
+            "primary",
+            "secondary",
+            "text",
+            "destructive"
+          ],
+          "sizes": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "states": [
+            "normal",
+            "loading",
+            "disabled"
+          ],
+          "status": "pending"
+        },
+        {
+          "component": "Input",
+          "variants": [
+            "outlined",
+            "filled",
+            "default"
+          ],
+          "types": [
+            "text",
+            "password",
+            "number"
+          ],
+          "states": [
+            "normal",
+            "error",
+            "success",
+            "disabled"
+          ],
+          "status": "pending"
+        },
+        {
+          "component": "Typography",
+          "variants": [
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "body1",
+            "body2",
+            "caption"
+          ],
+          "features": [
+            "alignment",
+            "color",
+            "weight"
+          ],
+          "status": "pending"
+        },
+        {
+          "component": "Card",
+          "variants": [
+            "elevated",
+            "outlined",
+            "filled"
+          ],
+          "features": [
+            "header",
+            "content",
+            "actions",
+            "image"
+          ],
+          "status": "pending"
+        },
+        {
+          "component": "Layout",
+          "components": [
+            "Container",
+            "Row",
+            "Column"
+          ],
+          "features": [
+            "responsive",
+            "breakpoints",
+            "gutters"
+          ],
+          "status": "pending"
+        }
+      ],
+      "performanceMetrics": {
+        "lighthouse": null,
+        "loadTime": null,
+        "renderTime": null
+      }
+    },
+    "firefox": {
+      "browser": "firefox",
+      "status": "pending",
+      "tests": [
+        {
+          "route": "/",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-mobile-home.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-tablet-home.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-desktop-home.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-desktop-large-home.png"
+            }
+          ]
+        },
+        {
+          "route": "/home",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-mobile-homehome.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-tablet-homehome.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-desktop-homehome.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-desktop-large-homehome.png"
+            }
+          ]
+        },
+        {
+          "route": "/component-demo",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-mobile-homecomponent-demo.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-tablet-homecomponent-demo.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-desktop-homecomponent-demo.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-desktop-large-homecomponent-demo.png"
+            }
+          ]
+        },
+        {
+          "route": "/explore",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-mobile-homeexplore.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-tablet-homeexplore.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-desktop-homeexplore.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-desktop-large-homeexplore.png"
+            }
+          ]
+        },
+        {
+          "route": "/profile",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-mobile-homeprofile.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-tablet-homeprofile.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-desktop-homeprofile.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "firefox-desktop-large-homeprofile.png"
+            }
+          ]
+        }
+      ],
+      "componentTests": [
+        {
+          "component": "Button",
+          "variants": [
+            "primary",
+            "secondary",
+            "text",
+            "destructive"
+          ],
+          "sizes": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "states": [
+            "normal",
+            "loading",
+            "disabled"
+          ],
+          "status": "pending"
+        },
+        {
+          "component": "Input",
+          "variants": [
+            "outlined",
+            "filled",
+            "default"
+          ],
+          "types": [
+            "text",
+            "password",
+            "number"
+          ],
+          "states": [
+            "normal",
+            "error",
+            "success",
+            "disabled"
+          ],
+          "status": "pending"
+        },
+        {
+          "component": "Typography",
+          "variants": [
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "body1",
+            "body2",
+            "caption"
+          ],
+          "features": [
+            "alignment",
+            "color",
+            "weight"
+          ],
+          "status": "pending"
+        },
+        {
+          "component": "Card",
+          "variants": [
+            "elevated",
+            "outlined",
+            "filled"
+          ],
+          "features": [
+            "header",
+            "content",
+            "actions",
+            "image"
+          ],
+          "status": "pending"
+        },
+        {
+          "component": "Layout",
+          "components": [
+            "Container",
+            "Row",
+            "Column"
+          ],
+          "features": [
+            "responsive",
+            "breakpoints",
+            "gutters"
+          ],
+          "status": "pending"
+        }
+      ],
+      "performanceMetrics": {
+        "lighthouse": null,
+        "loadTime": null,
+        "renderTime": null
+      }
+    },
+    "safari": {
+      "browser": "safari",
+      "status": "pending",
+      "tests": [
+        {
+          "route": "/",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-mobile-home.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-tablet-home.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-desktop-home.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-desktop-large-home.png"
+            }
+          ]
+        },
+        {
+          "route": "/home",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-mobile-homehome.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-tablet-homehome.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-desktop-homehome.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-desktop-large-homehome.png"
+            }
+          ]
+        },
+        {
+          "route": "/component-demo",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-mobile-homecomponent-demo.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-tablet-homecomponent-demo.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-desktop-homecomponent-demo.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-desktop-large-homecomponent-demo.png"
+            }
+          ]
+        },
+        {
+          "route": "/explore",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-mobile-homeexplore.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-tablet-homeexplore.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-desktop-homeexplore.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-desktop-large-homeexplore.png"
+            }
+          ]
+        },
+        {
+          "route": "/profile",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-mobile-homeprofile.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-tablet-homeprofile.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-desktop-homeprofile.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "safari-desktop-large-homeprofile.png"
+            }
+          ]
+        }
+      ],
+      "componentTests": [
+        {
+          "component": "Button",
+          "variants": [
+            "primary",
+            "secondary",
+            "text",
+            "destructive"
+          ],
+          "sizes": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "states": [
+            "normal",
+            "loading",
+            "disabled"
+          ],
+          "status": "pending"
+        },
+        {
+          "component": "Input",
+          "variants": [
+            "outlined",
+            "filled",
+            "default"
+          ],
+          "types": [
+            "text",
+            "password",
+            "number"
+          ],
+          "states": [
+            "normal",
+            "error",
+            "success",
+            "disabled"
+          ],
+          "status": "pending"
+        },
+        {
+          "component": "Typography",
+          "variants": [
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "body1",
+            "body2",
+            "caption"
+          ],
+          "features": [
+            "alignment",
+            "color",
+            "weight"
+          ],
+          "status": "pending"
+        },
+        {
+          "component": "Card",
+          "variants": [
+            "elevated",
+            "outlined",
+            "filled"
+          ],
+          "features": [
+            "header",
+            "content",
+            "actions",
+            "image"
+          ],
+          "status": "pending"
+        },
+        {
+          "component": "Layout",
+          "components": [
+            "Container",
+            "Row",
+            "Column"
+          ],
+          "features": [
+            "responsive",
+            "breakpoints",
+            "gutters"
+          ],
+          "status": "pending"
+        }
+      ],
+      "performanceMetrics": {
+        "lighthouse": null,
+        "loadTime": null,
+        "renderTime": null
+      }
+    },
+    "edge": {
+      "browser": "edge",
+      "status": "pending",
+      "tests": [
+        {
+          "route": "/",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-mobile-home.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-tablet-home.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-desktop-home.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-desktop-large-home.png"
+            }
+          ]
+        },
+        {
+          "route": "/home",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-mobile-homehome.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-tablet-homehome.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-desktop-homehome.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-desktop-large-homehome.png"
+            }
+          ]
+        },
+        {
+          "route": "/component-demo",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-mobile-homecomponent-demo.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-tablet-homecomponent-demo.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-desktop-homecomponent-demo.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-desktop-large-homecomponent-demo.png"
+            }
+          ]
+        },
+        {
+          "route": "/explore",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-mobile-homeexplore.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-tablet-homeexplore.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-desktop-homeexplore.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-desktop-large-homeexplore.png"
+            }
+          ]
+        },
+        {
+          "route": "/profile",
+          "viewports": [
+            {
+              "name": "mobile",
+              "width": 375,
+              "height": 667,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-mobile-homeprofile.png"
+            },
+            {
+              "name": "tablet",
+              "width": 768,
+              "height": 1024,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-tablet-homeprofile.png"
+            },
+            {
+              "name": "desktop",
+              "width": 1200,
+              "height": 800,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-desktop-homeprofile.png"
+            },
+            {
+              "name": "desktop-large",
+              "width": 1440,
+              "height": 900,
+              "status": "pending",
+              "issues": [],
+              "screenshot": "edge-desktop-large-homeprofile.png"
+            }
+          ]
+        }
+      ],
+      "componentTests": [
+        {
+          "component": "Button",
+          "variants": [
+            "primary",
+            "secondary",
+            "text",
+            "destructive"
+          ],
+          "sizes": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "states": [
+            "normal",
+            "loading",
+            "disabled"
+          ],
+          "status": "pending"
+        },
+        {
+          "component": "Input",
+          "variants": [
+            "outlined",
+            "filled",
+            "default"
+          ],
+          "types": [
+            "text",
+            "password",
+            "number"
+          ],
+          "states": [
+            "normal",
+            "error",
+            "success",
+            "disabled"
+          ],
+          "status": "pending"
+        },
+        {
+          "component": "Typography",
+          "variants": [
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "body1",
+            "body2",
+            "caption"
+          ],
+          "features": [
+            "alignment",
+            "color",
+            "weight"
+          ],
+          "status": "pending"
+        },
+        {
+          "component": "Card",
+          "variants": [
+            "elevated",
+            "outlined",
+            "filled"
+          ],
+          "features": [
+            "header",
+            "content",
+            "actions",
+            "image"
+          ],
+          "status": "pending"
+        },
+        {
+          "component": "Layout",
+          "components": [
+            "Container",
+            "Row",
+            "Column"
+          ],
+          "features": [
+            "responsive",
+            "breakpoints",
+            "gutters"
+          ],
+          "status": "pending"
+        }
+      ],
+      "performanceMetrics": {
+        "lighthouse": null,
+        "loadTime": null,
+        "renderTime": null
+      }
+    }
+  },
+  "summary": {
+    "totalTests": 80,
+    "passedTests": 0,
+    "failedTests": 0,
+    "testCoverage": {
+      "components": 8,
+      "browsers": 4,
+      "viewports": 4,
+      "routes": 5,
+      "totalCombinations": 128
+    }
+  }
+}

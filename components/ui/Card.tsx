@@ -1,11 +1,11 @@
+import React, { useCallback, useMemo } from 'react';
 import {
-  ImageSourcePropType,
-  TouchableOpacityProps,
-  ViewStyle
+    ImageSourcePropType,
+    TouchableOpacityProps,
+    ViewStyle
 } from 'react-native';
 import { Card as PaperCard, useTheme } from 'react-native-paper';
 
-import React from 'react';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 export type CardVariant = 'elevated' | 'outlined' | 'filled';
@@ -39,7 +39,21 @@ export interface CardProps extends Omit<TouchableOpacityProps, 'style'> {
   darkColor?: string;
 }
 
-export function Card({
+// Memoize variant to mode mapping
+const VARIANT_MODE_MAP = {
+  elevated: 'elevated',
+  outlined: 'outlined',
+  filled: 'contained',
+} as const;
+
+// Memoize size configurations
+const SIZE_CONFIG = {
+  sm: { padding: 12, borderRadius: 8 },
+  md: { padding: 16, borderRadius: 12 },
+  lg: { padding: 20, borderRadius: 16 },
+} as const;
+
+const CardComponent: React.FC<CardProps> = ({
   variant = 'elevated',
   size = 'md',
   header,
@@ -54,25 +68,74 @@ export function Card({
   lightColor,
   darkColor,
   ...touchableProps
-}: CardProps) {
+}) => {
   const paperTheme = useTheme();
   const themeColor = useThemeColor(
     { light: lightColor, dark: darkColor },
     'card'
   );
   
-  // Use Paper theme colors as fallback
-  const backgroundColor = themeColor || paperTheme.colors.surface;
-  const paddingValue = getPaddingValue(size);
-  const borderRadius = getBorderRadius(size);
+  // Memoize computed values
+  const backgroundColor = useMemo(() => 
+    themeColor || paperTheme.colors.surface, 
+    [themeColor, paperTheme.colors.surface]
+  );
+  
+  const sizeConfig = useMemo(() => SIZE_CONFIG[size], [size]);
+  const paperMode = useMemo(() => VARIANT_MODE_MAP[variant], [variant]);
+  
+  // Memoize title and subtitle styles
+  const titleStyle = useMemo(() => ({
+    fontWeight: '600' as const,
+    color: paperTheme.colors.onSurface 
+  }), [paperTheme.colors.onSurface]);
+  
+  const subtitleStyle = useMemo(() => ({
+    color: paperTheme.colors.onSurfaceVariant
+  }), [paperTheme.colors.onSurfaceVariant]);
 
-  // Map variant to Paper card mode
-  const paperMode = getPaperMode(variant);
+  // Memoize image border radius styles
+  const imageBorderStyle = useMemo(() => ({
+    height: imageHeight || 200,
+    borderTopLeftRadius: sizeConfig.borderRadius,
+    borderTopRightRadius: sizeConfig.borderRadius,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+  }), [imageHeight, sizeConfig.borderRadius]);
 
-  const renderHeader = () => {
+  // Memoize header content padding style
+  const contentPaddingStyle = useMemo(() => ({
+    paddingHorizontal: sizeConfig.padding
+  }), [sizeConfig.padding]);
+
+  // Memoize card style
+  const cardStyle = useMemo(() => [
+    {
+      backgroundColor,
+      borderRadius: sizeConfig.borderRadius,
+      margin: 0,
+    },
+    style,
+  ], [backgroundColor, sizeConfig.borderRadius, style]);
+
+  // Memoize press handlers to prevent recreation
+  const handlePress = useCallback(() => {
+    if (touchableProps.onPress) {
+      touchableProps.onPress({} as any);
+    }
+  }, [touchableProps.onPress]);
+
+  const handleLongPress = useCallback(() => {
+    if (touchableProps.onLongPress) {
+      touchableProps.onLongPress({} as any);
+    }
+  }, [touchableProps.onLongPress]);
+
+  // Memoize rendered components to prevent recreation
+  const renderHeader = useMemo(() => {
     if (header) {
       return (
-        <PaperCard.Content style={{ paddingHorizontal: paddingValue }}>
+        <PaperCard.Content style={contentPaddingStyle}>
           {header}
         </PaperCard.Content>
       );
@@ -83,13 +146,8 @@ export function Card({
         <PaperCard.Title
           title={title}
           subtitle={subtitle}
-          titleStyle={{ 
-            fontWeight: '600',
-            color: paperTheme.colors.onSurface 
-          }}
-          subtitleStyle={{
-            color: paperTheme.colors.onSurfaceVariant
-          }}
+          titleStyle={titleStyle}
+          subtitleStyle={subtitleStyle}
           titleNumberOfLines={2}
           subtitleNumberOfLines={2}
         />
@@ -97,115 +155,71 @@ export function Card({
     }
     
     return null;
-  };
+  }, [header, title, subtitle, contentPaddingStyle, titleStyle, subtitleStyle]);
 
-  const renderContent = () => {
+  const renderContent = useMemo(() => {
     if (!children) return null;
     
     return (
-      <PaperCard.Content style={{ paddingHorizontal: paddingValue }}>
+      <PaperCard.Content style={contentPaddingStyle}>
         {children}
       </PaperCard.Content>
     );
-  };
+  }, [children, contentPaddingStyle]);
 
-  const renderFooter = () => {
+  const renderFooter = useMemo(() => {
     if (!footer) return null;
     
     return (
-      <PaperCard.Actions style={{ paddingHorizontal: paddingValue }}>
+      <PaperCard.Actions style={contentPaddingStyle}>
         {footer}
       </PaperCard.Actions>
     );
-  };
+  }, [footer, contentPaddingStyle]);
 
-  const cardProps = {
+  const renderImage = useMemo(() => {
+    if (!image) return null;
+    
+    return (
+      <PaperCard.Cover
+        source={image}
+        style={imageBorderStyle}
+      />
+    );
+  }, [image, imageBorderStyle]);
+
+  // Memoize card props
+  const cardProps = useMemo(() => ({
     mode: paperMode,
-    style: [
-      {
-        backgroundColor,
-        borderRadius,
-        margin: 0,
-      },
-      style,
-    ],
+    style: cardStyle,
     ...(pressable && {
-      onPress: touchableProps.onPress,
-      onLongPress: touchableProps.onLongPress ? () => touchableProps.onLongPress!({} as any) : undefined,
+      onPress: handlePress,
+      onLongPress: touchableProps.onLongPress ? handleLongPress : undefined,
     }),
-  };
+  }), [paperMode, cardStyle, pressable, handlePress, touchableProps.onLongPress, handleLongPress]);
 
   return (
     <PaperCard {...cardProps}>
-      {image && (
-        <PaperCard.Cover
-          source={image}
-          style={{
-            height: imageHeight || 200,
-            borderTopLeftRadius: borderRadius,
-            borderTopRightRadius: borderRadius,
-            borderBottomLeftRadius: 0,
-            borderBottomRightRadius: 0,
-          }}
-        />
-      )}
-      
-      {renderHeader()}
-      {renderContent()}
-      {renderFooter()}
+      {renderImage}
+      {renderHeader}
+      {renderContent}
+      {renderFooter}
     </PaperCard>
   );
-}
+};
 
-// Helper functions
-function getPaperMode(variant: CardVariant): 'elevated' | 'outlined' | 'contained' {
-  switch (variant) {
-    case 'elevated':
-      return 'elevated';
-    case 'outlined':
-      return 'outlined';
-    case 'filled':
-      return 'contained';
-    default:
-      return 'elevated';
-  }
-}
-
-function getPaddingValue(size: CardSize): number {
-  switch (size) {
-    case 'sm':
-      return 12;
-    case 'md':
-      return 16;
-    case 'lg':
-      return 20;
-    default:
-      return 16;
-  }
-}
-
-function getBorderRadius(size: CardSize): number {
-  switch (size) {
-    case 'sm':
-      return 8;
-    case 'md':
-      return 12;
-    case 'lg':
-      return 16;
-    default:
-      return 12;
-  }
-}
+// Memoize the component to prevent unnecessary re-renders
+export const Card = React.memo(CardComponent);
 
 // Convenience components for common card variants
-export const ProductCard = (props: Omit<CardProps, 'variant'>) => (
-  <Card {...props} variant="elevated" />
+const InfoCardComponent = (props: Omit<CardProps, 'variant'>) => (
+  <Card variant="outlined" {...props} />
 );
+InfoCardComponent.displayName = 'InfoCard';
+export const InfoCard = React.memo(InfoCardComponent);
 
-export const InfoCard = (props: Omit<CardProps, 'variant'>) => (
-  <Card {...props} variant="outlined" />
+const ActionCardComponent = (props: Omit<CardProps, 'variant' | 'pressable'>) => (
+  <Card variant="elevated" pressable {...props} />
 );
-
-export const ActionCard = (props: Omit<CardProps, 'variant' | 'pressable'>) => (
-  <Card {...props} variant="filled" pressable={true} />
-); 
+ActionCardComponent.displayName = 'ActionCard';
+export const ActionCard = React.memo(ActionCardComponent); 

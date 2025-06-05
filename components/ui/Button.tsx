@@ -1,8 +1,8 @@
+import React, { useCallback, useMemo } from 'react';
 import { TextStyle, ViewStyle } from 'react-native';
 import { Button as PaperButton, TouchableRipple } from 'react-native-paper';
 
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'text' | 'destructive';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -37,7 +37,28 @@ export interface ButtonProps {
   testID?: string;
 }
 
-export function Button({
+// Memoize size calculations to prevent recreation
+const SIZE_CONFIG = {
+  sm: { height: 36, fontSize: 14 },
+  md: { height: 44, fontSize: 16 },
+  lg: { height: 52, fontSize: 18 },
+} as const;
+
+// Memoize mode mapping to prevent recreation
+const VARIANT_MODE_MAP = {
+  primary: 'contained',
+  secondary: 'outlined',
+  text: 'text',
+  destructive: 'contained',
+} as const;
+
+// Memoize destructive button colors to prevent recreation
+const DESTRUCTIVE_COLORS = {
+  buttonColor: '#dc3545',
+  textColor: '#ffffff',
+} as const;
+
+export const Button = React.memo<ButtonProps>(function Button({
   title,
   variant = 'primary',
   size = 'md',
@@ -51,78 +72,57 @@ export function Button({
   onPress,
   testID,
   ...props
-}: ButtonProps) {
+}) {
   const isDisabled = disabled || loading;
 
-  // Map variants to Paper Button modes
-  const getPaperMode = (variant: ButtonVariant) => {
-    switch (variant) {
-      case 'primary':
-        return 'contained';
-      case 'secondary':
-        return 'outlined';
-      case 'text':
-        return 'text';
-      case 'destructive':
-        return 'contained';
-      default:
-        return 'contained';
-    }
-  };
-
-  // Get button content height based on size
-  const getButtonHeight = (size: ButtonSize) => {
-    switch (size) {
-      case 'sm':
-        return 36;
-      case 'md':
-        return 44;
-      case 'lg':
-        return 52;
-      default:
-        return 44;
-    }
-  };
-
-  // Get font size based on size
-  const getFontSize = (size: ButtonSize) => {
-    switch (size) {
-      case 'sm':
-        return 14;
-      case 'md':
-        return 16;
-      case 'lg':
-        return 18;
-      default:
-        return 16;
-    }
-  };
-
-  const buttonStyle: ViewStyle = {
-    height: getButtonHeight(size),
+  // Memoize computed values to prevent recalculation on every render
+  const sizeConfig = useMemo(() => SIZE_CONFIG[size], [size]);
+  const paperMode = useMemo(() => VARIANT_MODE_MAP[variant], [variant]);
+  
+  // Memoize styles to prevent recreation
+  const buttonStyle = useMemo((): ViewStyle => ({
+    height: sizeConfig.height,
     justifyContent: 'center',
     ...(fullWidth && { width: '100%' }),
     ...style,
-  };
+  }), [sizeConfig.height, fullWidth, style]);
 
-  const buttonTextStyle: TextStyle = {
-    fontSize: getFontSize(size),
+  const buttonTextStyle = useMemo((): TextStyle => ({
+    fontSize: sizeConfig.fontSize,
     ...textStyle,
-  };
+  }), [sizeConfig.fontSize, textStyle]);
+
+  // Memoize icon render function to prevent recreation
+  const iconRenderer = useMemo(() => {
+    return leftIcon ? () => leftIcon : undefined;
+  }, [leftIcon]);
+
+  // Memoize transparent style for text variant
+  const transparentStyle = useMemo(() => [
+    buttonStyle, 
+    { backgroundColor: 'transparent' }
+  ], [buttonStyle]);
+
+  // Use useCallback for handlers to prevent recreation
+  const handlePress = useCallback(() => {
+    if (onPress && !isDisabled) {
+      onPress();
+    }
+  }, [onPress, isDisabled]);
 
   // For destructive variant, we need custom styling
   if (variant === 'destructive') {
     return (
       <PaperButton
         mode="contained"
-        onPress={onPress}
+        onPress={handlePress}
         disabled={isDisabled}
         loading={loading}
         style={buttonStyle}
         labelStyle={buttonTextStyle}
-        buttonColor="#dc3545"
-        textColor="#ffffff"
-        icon={leftIcon ? () => leftIcon : undefined}
+        buttonColor={DESTRUCTIVE_COLORS.buttonColor}
+        textColor={DESTRUCTIVE_COLORS.textColor}
+        icon={iconRenderer}
         testID={testID}
         {...props}
       >
@@ -135,9 +135,9 @@ export function Button({
   if (variant === 'text') {
     return (
       <TouchableRipple
-        onPress={onPress}
+        onPress={handlePress}
         disabled={isDisabled}
-        style={[buttonStyle, { backgroundColor: 'transparent' }]}
+        style={transparentStyle}
         testID={testID}
       >
         <PaperButton
@@ -145,7 +145,7 @@ export function Button({
           loading={loading}
           disabled={isDisabled}
           labelStyle={buttonTextStyle}
-          icon={leftIcon ? () => leftIcon : undefined}
+          icon={iconRenderer}
           contentStyle={{ height: '100%' }}
         >
           {title}
@@ -157,17 +157,17 @@ export function Button({
   // Standard Paper Button for primary and secondary variants
   return (
     <PaperButton
-      mode={getPaperMode(variant)}
-      onPress={onPress}
+      mode={paperMode}
+      onPress={handlePress}
       disabled={isDisabled}
       loading={loading}
       style={buttonStyle}
       labelStyle={buttonTextStyle}
-      icon={leftIcon ? () => leftIcon : undefined}
+      icon={iconRenderer}
       testID={testID}
       {...props}
     >
       {title}
     </PaperButton>
   );
-} 
+}); 

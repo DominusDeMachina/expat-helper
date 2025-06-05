@@ -6,6 +6,10 @@ const fontConfig = {
   fontFamily: 'System',
 };
 
+// Memoize font configuration to prevent recreation
+const memoizedFonts = configureFonts({ config: fontConfig });
+
+// Create memoized theme objects to prevent recreation on every render
 export const paperLightTheme = {
   ...MD3LightTheme,
   colors: {
@@ -33,8 +37,8 @@ export const paperLightTheme = {
     scrim: '#000000',
     backdrop: 'rgba(0, 0, 0, 0.5)',
   },
-  fonts: configureFonts({ config: fontConfig }),
-};
+  fonts: memoizedFonts,
+} as const; // Make immutable for better performance
 
 export const paperDarkTheme = {
   ...MD3DarkTheme,
@@ -63,7 +67,7 @@ export const paperDarkTheme = {
     scrim: '#000000',
     backdrop: 'rgba(255, 255, 255, 0.5)',
   },
-  fonts: configureFonts({ config: fontConfig }),
-};
+  fonts: memoizedFonts,
+} as const; // Make immutable for better performance
 
 export type PaperTheme = typeof paperLightTheme; 

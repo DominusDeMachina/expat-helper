@@ -1,0 +1,77 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# React Native Paper Best Practices
+
+## **Surface Component Overflow Fix**
+
+- **Problem**: Setting `overflow: 'hidden'` directly on React Native Paper's `Surface` component causes shadow clipping warning
+- **Solution**: Wrap Surface content in a separate View with the overflow style
+
+### **❌ DON'T: Set overflow on Surface**
+```typescript
+<Surface style={{ overflow: 'hidden', /* other styles */ }} elevation={1}>
+  <Image source={source} style={imageStyle} />
+</Surface>
+```
+
+### **✅ DO: Use content wrapper with overflow**
+```typescript
+<Surface style={containerStyle} elevation={1}>
+  <View style={{ overflow: 'hidden', borderRadius: 8 }}>
+    <Image source={source} style={imageStyle} />
+  </View>
+</Surface>
+```
+
+## **Component-Specific Patterns**
+
+### **ProductImage Component**
+- Uses `getContentWrapperStyle()` helper to apply overflow and border radius to inner View
+- Maintains Surface elevation for shadows while preventing clipping
+- Content wrapper handles image/content clipping with proper border radius
+
+### **General Guidelines**
+- **Surface elevation > 0**: Never set overflow: 'hidden' directly on Surface
+- **Content clipping**: Use inner View wrapper for overflow control
+- **Border radius**: Apply to both Surface (background) and content wrapper (clipping)
+- **Shadows**: Surface elevation creates shadows that need proper display space
+
+## **Theme Integration**
+
+### **Color Usage Patterns**
+```typescript
+// Use Paper theme colors consistently
+const backgroundColor = paperTheme.colors.surface;
+const textColor = paperTheme.colors.onSurface;
+const mutedColor = paperTheme.colors.onSurfaceVariant;
+```
+
+### **Elevation Standards**
+- `elevation={0}`: No shadow, flat appearance
+- `elevation={1}`: Subtle shadow for cards/containers
+- `elevation={3}`: Moderate shadow for floating elements
+- `elevation={4}`: Strong shadow for modals/overlays
+
+## **Common Anti-Patterns**
+
+### **Avoid Direct Style Override on Paper Components**
+```typescript
+// ❌ DON'T: Override Paper component styles that affect functionality
+<Surface style={{ elevation: 0, shadowOpacity: 0.5 }} elevation={2}>
+
+// ✅ DO: Use Paper's built-in elevation prop
+<Surface elevation={2}>
+```
+
+### **Consistent Import Pattern**
+```typescript
+// ✅ DO: Import Paper components consistently
+import { Surface, useTheme, Text } from 'react-native-paper';
+
+// ❌ DON'T: Mix with React Native equivalents when Paper provides the functionality
+import { Surface } from 'react-native-paper';
+import { Text } from 'react-native'; // Use Paper's Text instead
+```

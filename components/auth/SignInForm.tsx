@@ -2,7 +2,6 @@ import { Alert, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, Vie
 import React, { useState } from 'react'
 
 import { Colors } from '../../constants/Colors'
-import { testSupabaseConnection } from '../../config/supabase/client'
 import { useAuth } from '../../contexts/AuthContext'
 
 interface SignInFormProps {
@@ -11,15 +10,6 @@ interface SignInFormProps {
 }
 
 export const SignInForm: React.FC<SignInFormProps> = ({ onSignUpPress, onSuccess }) => {
-  // Debug environment variables
-  console.log('Supabase URL:', process.env.EXPO_PUBLIC_SUPABASE_URL)
-  console.log('Supabase Key exists:', !!process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY)
-  
-  // Test connection on component mount
-  React.useEffect(() => {
-    testSupabaseConnection()
-  }, [])
-  
   const { signIn, signInWithGoogle, signInWithFacebook, signInWithMicrosoft, resetPassword, loading, error, clearError } = useAuth()
   const colorScheme = useColorScheme()
   const colors = Colors[colorScheme ?? 'light']

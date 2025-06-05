@@ -125,35 +125,39 @@ export function ProductImage({
 
   const renderPlaceholder = () => (
     <Surface style={[containerStyle, styles.placeholder]} elevation={0}>
-      <Ionicons
-        name={placeholderIcon as any}
-        size={getSizeValue(size) / 3}
-        color={iconColor}
-      />
-      <Typography
-        variant="caption"
-        style={[styles.placeholderText, { color: paperTheme.colors.onSurfaceVariant }]}
-      >
-        {placeholder}
-      </Typography>
+      <View style={getContentWrapperStyle(size, variant)}>
+        <Ionicons
+          name={placeholderIcon as any}
+          size={getSizeValue(size) / 3}
+          color={iconColor}
+        />
+        <Typography
+          variant="caption"
+          style={[styles.placeholderText, { color: paperTheme.colors.onSurfaceVariant }]}
+        >
+          {placeholder}
+        </Typography>
+      </View>
     </Surface>
   );
 
   const renderError = () => (
     <Surface style={[containerStyle, styles.error]} elevation={0}>
-      <Ionicons
-        name="alert-circle-outline"
-        size={getSizeValue(size) / 3}
-        color={paperTheme.colors.error}
-      />
-      {showError && (
-        <Typography
-          variant="caption"
-          style={[styles.errorText, { color: paperTheme.colors.error }]}
-        >
-          {errorMessage}
-        </Typography>
-      )}
+      <View style={getContentWrapperStyle(size, variant)}>
+        <Ionicons
+          name="alert-circle-outline"
+          size={getSizeValue(size) / 3}
+          color={paperTheme.colors.error}
+        />
+        {showError && (
+          <Typography
+            variant="caption"
+            style={[styles.errorText, { color: paperTheme.colors.error }]}
+          >
+            {errorMessage}
+          </Typography>
+        )}
+      </View>
     </Surface>
   );
 
@@ -179,31 +183,33 @@ export function ProductImage({
     
     return (
       <Surface style={containerStyle} elevation={1}>
-        <ImageComponent
-          style={{ flex: 1 }}
-          onPress={zoomable ? handleZoomOpen : undefined}
-          accessibilityRole={zoomable ? 'button' : 'image'}
-          accessibilityLabel={alt || 'Product image'}
-          accessibilityHint={zoomable ? 'Tap to zoom' : undefined}
-        >
-          <Image
-            source={imageSource!}
-            style={imageStyle}
-            onLoad={handleLoad}
-            onError={handleError}
-            resizeMode="cover"
-          />
-          {zoomable && !loading && !error && (
-            <View style={[styles.zoomIcon, { backgroundColor: paperTheme.colors.backdrop }]}>
-              <Ionicons
-                name="expand-outline"
-                size={16}
-                color={paperTheme.colors.onSurface}
-              />
-            </View>
-          )}
-          {loading && renderLoading()}
-        </ImageComponent>
+        <View style={getContentWrapperStyle(size, variant)}>
+          <ImageComponent
+            style={{ flex: 1 }}
+            onPress={zoomable ? handleZoomOpen : undefined}
+            accessibilityRole={zoomable ? 'button' : 'image'}
+            accessibilityLabel={alt || 'Product image'}
+            accessibilityHint={zoomable ? 'Tap to zoom' : undefined}
+          >
+            <Image
+              source={imageSource!}
+              style={imageStyle}
+              onLoad={handleLoad}
+              onError={handleError}
+              resizeMode="cover"
+            />
+            {zoomable && !loading && !error && (
+              <View style={[styles.zoomIcon, { backgroundColor: paperTheme.colors.backdrop }]}>
+                <Ionicons
+                  name="expand-outline"
+                  size={16}
+                  color={paperTheme.colors.onSurface}
+                />
+              </View>
+            )}
+            {loading && renderLoading()}
+          </ImageComponent>
+        </View>
       </Surface>
     );
   };
@@ -301,10 +307,38 @@ function getContainerStyle(
     borderColor,
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
+    // overflow removed from Surface container
   };
 
   // Variant-specific styles
+  switch (variant) {
+    case 'rounded':
+      baseStyle.borderRadius = 8;
+      break;
+    case 'square':
+      baseStyle.borderRadius = 0;
+      break;
+    case 'circle':
+      baseStyle.borderRadius = sizeValue / 2;
+      break;
+  }
+
+  return baseStyle;
+}
+
+function getContentWrapperStyle(
+  size: ProductImageSize,
+  variant: ProductImageVariant
+): ViewStyle {
+  const sizeValue = getSizeValue(size);
+  
+  const baseStyle: ViewStyle = {
+    width: '100%',
+    height: '100%',
+    overflow: 'hidden', // overflow moved to content wrapper
+  };
+
+  // Apply border radius to content wrapper to maintain clipping
   switch (variant) {
     case 'rounded':
       baseStyle.borderRadius = 8;
